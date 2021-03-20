@@ -1,13 +1,8 @@
 
-
-
-
 /*
-Rasterization
-1- triangle setup
-2- triangle traversal
-
+Application Space
 */
+
 
 
 
@@ -17,49 +12,56 @@ Rasterization
 
 #include"application.h"
 #include"pixel_processor.h"
+#include"rasterizer.h"
 
 
 namespace mge
 {
-	/*  (De)Constructing the rasterizer  */
-	Application::Application(VideoBuffer* buffer) {
-		this->videoBuffer = buffer;
-	}
-	
-	Application::~Application() {
 
-	}
-
-
-
-
-
+	/*  Globals  */
+	Rasterizer rasterizer = 0;
+	float time = 0;
 
 
 
 	/*  The work of the rasterizer  */
-
 	bool Application::OnLoad() {
+		// initialize the rasterizer
+		rasterizer = Rasterizer(this->videoBuffer);
+
+
 		return true;
 	}
 
 
-	float time = 0;
+
+
+
+
+
+
+
+
+
+
+
 
 	bool Application::OnUpdate(float deltaTime) {
 
 
 		/* dummy animation */
 		time = time + deltaTime;
+		
 		if (time > 5)
 		{
 			time = 0;
 		}
+
 		for (int y = 0; y < this->videoBuffer->height; y++)
 		{
 			for (int x = 0; x < this->videoBuffer->width; x++)
 			{
-				*((unsigned int*)this->videoBuffer->addr + y * this->videoBuffer->width + x) = x * time;
+				rasterizer.drawPixel(x, y, Pixel(x * time));
 			}
 		}
 
@@ -71,6 +73,10 @@ namespace mge
 		/* successfully computed */
 		return true;
 	}
+
+
+
+
 
 
 

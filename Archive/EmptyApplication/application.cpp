@@ -24,6 +24,7 @@ namespace mge
 	/*  (De)Constructing the rasterizer  */
 	Application::Application(VideoBuffer* buffer) {
 		this->videoBuffer = buffer;
+		this->windowTitle = "Mustafa Graphics Engine";
 	}
 	
 	Application::~Application() {

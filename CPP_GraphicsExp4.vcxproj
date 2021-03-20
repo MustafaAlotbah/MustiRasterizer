@@ -142,11 +142,13 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pixel_processor.cpp" />
     <ClCompile Include="application.cpp" />
+    <ClCompile Include="rasterizer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h" />
     <ClInclude Include="pixel_processor.h" />
     <ClInclude Include="application.h" />
+    <ClInclude Include="rasterizer.h" />
     <ClInclude Include="types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -100,6 +100,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE _null, LPSTR lpszArgument, int
 	mge::Application application(&videoBuffer);
 
 
+	// call the application load;
+	application.OnLoad();
+
 
 	/*-----------------------------PROGRAM LOOP--------------------------------*/
 	while (isRunning)
@@ -226,4 +229,18 @@ LRESULT CALLBACK eventHandler(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	}
 
 	return result;
+}
+
+
+
+
+
+/*  (De)Constructing the application  */
+mge::Application::Application(VideoBuffer* buffer) {
+	this->videoBuffer = buffer;
+	this->windowTitle = L"Mustafa Graphics Engine";
+}
+
+mge::Application::~Application() {
+
 }
