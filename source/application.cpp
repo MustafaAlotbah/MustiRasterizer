@@ -63,6 +63,16 @@ namespace mge
 			{
 				rasterizer.drawPixel(x, y, Pixel(x * time));
 			}
+			//rasterizer.drawVerticalLine(20, 20, 120, Pixel(0xFFFFFF));
+			//rasterizer.drawHorizontalLine(20, 20, 120, Pixel(0xFFFFFF));
+
+			rasterizer.drawLine( 100, 50, 150, 100, Pixel(0xFFFFFF));
+			rasterizer.drawLine(150, 100, 100, 150, Pixel(0xFFFFFF));
+			rasterizer.drawLine(100, 150, 50, 100, Pixel(0xFFFFFF));
+			rasterizer.drawLine(50, 100, 100, 50, Pixel(0xFFFFFF));
+
+
+
 		}
 
 
