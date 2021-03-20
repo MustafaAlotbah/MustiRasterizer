@@ -1,0 +1,74 @@
+#pragma once
+
+
+#include<Windows.h>
+
+// Mustafa Graphics Engine
+namespace mge
+{
+	/*		DATATYPES		*/
+	typedef struct VideoBufferStruct
+	{
+		void* addr;			// address of the first pixel (bottom right)
+		int width;
+		int height;
+		BITMAPINFO bitmapInfo;
+	} VideoBuffer;
+
+	typedef struct ButtonStateStruct
+	{
+		bool isDown;
+		bool hasChanged;
+	} ButtonState;
+
+	enum ButtonName
+	{
+		BUTTON_UP,
+		BUTTON_DOWN,
+		BUTTON_LEFT,
+		BUTTON_RIGHT,
+
+		BUTTON_COUNT,
+	};
+
+
+	// array of buttons states
+	typedef struct InputStruct
+	{
+		ButtonState buttons[BUTTON_COUNT];
+	} Input;
+
+
+	/*		GLOBAL VARIABLES		*/
+	VideoBuffer videoBuffer;
+
+
+	/* The Application that uses GME API*/
+	class Rasterizer
+	{
+	public:
+		Rasterizer(VideoBuffer buffer);
+		~Rasterizer();
+		virtual bool OnLoad();
+		virtual bool OnUpdate(float DeltaTime);
+	private:
+		VideoBuffer buffer;
+		LPCWSTR windowTitle;
+
+	};
+
+
+
+
+
+	//Application::Application()
+	//{
+	//}
+
+	//Application::~Application()
+	//{
+	//}
+}
+
+
+
