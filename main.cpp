@@ -97,7 +97,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE _null, LPSTR lpszArgument, int
 
 	// Also keep track of Input
 	mge::Input input = {};
-	mge::Rasterizer rasterizer(videoBuffer);
+	mge::Rasterizer rasterizer(&videoBuffer);
 
 
 

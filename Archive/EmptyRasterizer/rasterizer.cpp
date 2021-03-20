@@ -7,7 +7,7 @@
 namespace mge
 {
 	/*  (De)Constructing the rasterizer  */
-	Rasterizer::Rasterizer(VideoBuffer buffer) {
+	Rasterizer::Rasterizer(VideoBuffer* buffer) {
 		this->buffer = buffer;
 	}
 
@@ -40,11 +40,11 @@ namespace mge
 		{
 			time = 0;
 		}
-		for (int y = 0; y < this->buffer.height; y++)
+		for (int y = 0; y < this->buffer->height; y++)
 		{
-			for (int x = 0; x < this->buffer.width; x++)
+			for (int x = 0; x < this->buffer->width; x++)
 			{
-				*((unsigned int*)this->buffer.addr + y * this->buffer.width + x) = x * time;
+				*((unsigned int*)this->buffer->addr + y * this->buffer->width + x) = x * time;
 			}
 		}
 

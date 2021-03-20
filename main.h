@@ -50,12 +50,12 @@ namespace mge
 	class Rasterizer
 	{
 	public:
-		Rasterizer(VideoBuffer buffer);
+		Rasterizer(VideoBuffer* buffer);
 		~Rasterizer();
 		virtual bool OnLoad();
 		virtual bool OnUpdate(float DeltaTime);
 	private:
-		VideoBuffer buffer;
+		VideoBuffer* buffer;
 		LPCWSTR windowTitle;
 	};
 
