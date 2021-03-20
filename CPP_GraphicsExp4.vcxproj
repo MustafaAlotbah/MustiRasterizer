@@ -139,17 +139,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="pixel_processor.cpp" />
-    <ClCompile Include="application.cpp" />
-    <ClCompile Include="rasterizer.cpp" />
+    <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\pixel_processor.cpp" />
+    <ClCompile Include="source\application.cpp" />
+    <ClCompile Include="source\rasterizer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main.h" />
-    <ClInclude Include="pixel_processor.h" />
-    <ClInclude Include="application.h" />
-    <ClInclude Include="rasterizer.h" />
-    <ClInclude Include="types.h" />
+    <ClInclude Include="source\main.h" />
+    <ClInclude Include="source\pixel_processor.h" />
+    <ClInclude Include="source\application.h" />
+    <ClInclude Include="source\rasterizer.h" />
+    <ClInclude Include="source\types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
