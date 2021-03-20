@@ -47,15 +47,17 @@ namespace mge
 
 
 	/* The Application that uses GME API*/
-	class Rasterizer
+
+
+	class Application
 	{
 	public:
-		Rasterizer(VideoBuffer buffer);
-		~Rasterizer();
+		Application(VideoBuffer* buffer);
+		~Application();
 		virtual bool OnLoad();
 		virtual bool OnUpdate(float DeltaTime);
 	private:
-		VideoBuffer buffer;
+		VideoBuffer* videoBuffer;
 		LPCWSTR windowTitle;
 	};
 

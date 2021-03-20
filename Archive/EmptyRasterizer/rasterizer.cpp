@@ -1,81 +1,43 @@
 
 
+/*
+Rasterization
+1- triangle setup
+2- triangle traversal
+
+*/
+
+
 #include"rasterizer.h"
 
 
 
 
-/*
 
-Rasterizer job is to convert 2D vetices in screen space with a z-value
-						into pixels on the screen
 
-*/
+namespace mge {
 
 
 
 
 
-
-
-namespace mge
-{
-	/*  (De)Constructing the rasterizer  */
-	Application::Application(VideoBuffer* buffer) {
+	Rasterizer::Rasterizer(VideoBuffer* buffer) {
 		this->buffer = buffer;
 	}
-
-	Application::~Application() {
+	Rasterizer::~Rasterizer() {
 
 	}
 
 
 
-
-
-
-
-
-	/*  The work of the rasterizer  */
-
-	bool Application::OnLoad() {
+	/*
+	Pixel has its x, y, z and depth information
+	Note the the pixel has to be in the screen space already!
+	*/
+	bool Rasterizer::drawPixel(int x, int y, Pixel p) {
+		*((uint32_t*)buffer->addr + y * buffer->width + x) = p.color.value;
 		return true;
 	}
-
-
-	float time = 0;
-
-	bool Application::OnUpdate(float deltaTime) {
-
-
-		/* dummy animation */
-		time = time + deltaTime;
-		if (time > 5)
-		{
-			time = 0;
-		}
-		for (int y = 0; y < this->buffer->height; y++)
-		{
-			for (int x = 0; x < this->buffer->width; x++)
-			{
-				*((unsigned int*)this->buffer->addr + y * this->buffer->width + x) = x * time;
-			}
-		}
-
-
-
-
-
-
-		/* successfully computed */
-		return true;
-	}
-
-
-
-
 
 
 }
-
-

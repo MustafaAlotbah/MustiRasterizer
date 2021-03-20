@@ -97,8 +97,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE _null, LPSTR lpszArgument, int
 
 	// Also keep track of Input
 	mge::Input input = {};
-	mge::Rasterizer rasterizer(videoBuffer);
+	mge::Application application(&videoBuffer);
 
+
+	// call the application load;
+	application.OnLoad();
 
 
 	/*-----------------------------PROGRAM LOOP--------------------------------*/
@@ -144,7 +147,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE _null, LPSTR lpszArgument, int
 
 		/*------------- SIMULATE-------------*/
 
-		rasterizer.OnUpdate(deltaTime);
+		application.OnUpdate(deltaTime);
 
 
 
@@ -226,4 +229,18 @@ LRESULT CALLBACK eventHandler(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	}
 
 	return result;
+}
+
+
+
+
+
+/*  (De)Constructing the application  */
+mge::Application::Application(VideoBuffer* buffer) {
+	this->videoBuffer = buffer;
+	this->windowTitle = L"Mustafa Graphics Engine";
+}
+
+mge::Application::~Application() {
+
 }
