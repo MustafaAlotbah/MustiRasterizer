@@ -1,14 +1,11 @@
 
 
-#include"rasterizer.h"
-
-
 
 
 /*
-
-Rasterizer job is to convert 2D vetices in screen space with a z-value
-						into pixels on the screen
+Rasterization
+1- triangle setup
+2- triangle traversal
 
 */
 
@@ -18,13 +15,17 @@ Rasterizer job is to convert 2D vetices in screen space with a z-value
 
 
 
+#include"application.h"
+#include"pixel_processor.h"
+
+
 namespace mge
 {
 	/*  (De)Constructing the rasterizer  */
 	Application::Application(VideoBuffer* buffer) {
-		this->buffer = buffer;
+		this->videoBuffer = buffer;
 	}
-
+	
 	Application::~Application() {
 
 	}
@@ -54,11 +55,11 @@ namespace mge
 		{
 			time = 0;
 		}
-		for (int y = 0; y < this->buffer->height; y++)
+		for (int y = 0; y < this->videoBuffer->height; y++)
 		{
-			for (int x = 0; x < this->buffer->width; x++)
+			for (int x = 0; x < this->videoBuffer->width; x++)
 			{
-				*((unsigned int*)this->buffer->addr + y * this->buffer->width + x) = x * time;
+				*((unsigned int*)this->videoBuffer->addr + y * this->videoBuffer->width + x) = x * time;
 			}
 		}
 

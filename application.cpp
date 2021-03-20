@@ -15,18 +15,18 @@ Rasterization
 
 
 
-#include"rasterizer.h"
+#include"application.h"
 #include"pixel_processor.h"
 
 
 namespace mge
 {
 	/*  (De)Constructing the rasterizer  */
-	Rasterizer::Rasterizer(VideoBuffer* buffer) {
-		this->buffer = buffer;
+	Application::Application(VideoBuffer* buffer) {
+		this->videoBuffer = buffer;
 	}
 	
-	Rasterizer::~Rasterizer() {
+	Application::~Application() {
 
 	}
 
@@ -39,14 +39,14 @@ namespace mge
 
 	/*  The work of the rasterizer  */
 
-	bool Rasterizer::OnLoad() {
+	bool Application::OnLoad() {
 		return true;
 	}
 
 
 	float time = 0;
 
-	bool Rasterizer::OnUpdate(float deltaTime) {
+	bool Application::OnUpdate(float deltaTime) {
 
 
 		/* dummy animation */
@@ -55,11 +55,11 @@ namespace mge
 		{
 			time = 0;
 		}
-		for (int y = 0; y < this->buffer->height; y++)
+		for (int y = 0; y < this->videoBuffer->height; y++)
 		{
-			for (int x = 0; x < this->buffer->width; x++)
+			for (int x = 0; x < this->videoBuffer->width; x++)
 			{
-				*((unsigned int*)this->buffer->addr + y * this->buffer->width + x) = x * time;
+				*((unsigned int*)this->videoBuffer->addr + y * this->videoBuffer->width + x) = x * time;
 			}
 		}
 

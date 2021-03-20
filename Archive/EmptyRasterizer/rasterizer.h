@@ -3,3 +3,17 @@
 
 
 #include"main.h"
+
+
+
+
+
+namespace mge
+{
+	//
+
+
+
+
+
+}
