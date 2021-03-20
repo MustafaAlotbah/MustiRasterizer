@@ -24,15 +24,6 @@
     <ClCompile Include="application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Archive\EmptyApplication\application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Archive\EmptyApplication\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Archive\EmptyApplication\pixel_processor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -45,18 +36,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Archive\EmptyApplication\application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Archive\EmptyApplication\main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Archive\EmptyApplication\pixel_processor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Archive\EmptyApplication\types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

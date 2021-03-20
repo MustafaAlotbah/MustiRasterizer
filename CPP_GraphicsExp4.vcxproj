@@ -139,18 +139,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Archive\EmptyApplication\application.cpp" />
-    <ClCompile Include="Archive\EmptyApplication\main.cpp" />
-    <ClCompile Include="Archive\EmptyApplication\pixel_processor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pixel_processor.cpp" />
     <ClCompile Include="application.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Archive\EmptyApplication\application.h" />
-    <ClInclude Include="Archive\EmptyApplication\main.h" />
-    <ClInclude Include="Archive\EmptyApplication\pixel_processor.h" />
-    <ClInclude Include="Archive\EmptyApplication\types.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="pixel_processor.h" />
     <ClInclude Include="application.h" />
