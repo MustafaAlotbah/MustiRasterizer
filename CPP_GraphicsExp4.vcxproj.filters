@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Archive">
-      <UniqueIdentifier>{933a28ea-13c6-45b6-85bc-341e517f2d45}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Archive\EmptyRasterizer">
-      <UniqueIdentifier>{d0c486a4-c7ef-4d5f-9d68-16244d4c0403}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
