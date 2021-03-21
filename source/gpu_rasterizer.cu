@@ -26,15 +26,24 @@ namespace mge {
 		*((uint32_t*)gpuBuffer + y * width + x) = p.color.value;
 	}
 
-	__global__ void gpuClearBufferKernel(void* gpuBuffer, int width, int height, Pixel p) {
-		//int i = threadIdx.x; 
-		//*((uint32_t*)gpuBuffer + i) = 0xFF00FF;//p.color.value;
-
-		gpuDrawPixel(gpuBuffer, width, height, threadIdx.x + 1000*blockIdx.x % (width * height), height-1, p);
+	__global__ void gpuClearBufferKernel(void* gpuBuffer, int width, int height, unsigned int threadsPerBlock, Pixel p) {
+		gpuDrawPixel(gpuBuffer, width, height, threadIdx.x + threadsPerBlock * blockIdx.x % (width * height), height-1, p);
 	}
 
 	__global__ void gpuDrawPixelKernel(void* gpuBuffer, int width, int height, int x, int y, Pixel p) {
 		gpuDrawPixel(gpuBuffer, width, height, x, y, p);
+	}
+
+	// draws a vertical line
+	__global__ void gpuDrawVerticalLine(void* gpuBuffer, int bWidth, int bHeight, unsigned int threadsPerBlock,
+		int x, int yMin, Pixel p) {
+		gpuDrawPixel(gpuBuffer, bWidth, bHeight, x, yMin + blockIdx.x * threadsPerBlock + threadIdx.x, p);
+	}
+
+	// draws a horizontal line
+	__global__ void gpuDrawHorizontalLine(void* gpuBuffer, int bWidth, int bHeight, unsigned int threadsPerBlock,
+		int y, int xMin, Pixel p) {
+		gpuDrawPixel(gpuBuffer, bWidth, bHeight, xMin + blockIdx.x * threadsPerBlock + threadIdx.x, y, p);
 	}
 
 
@@ -57,7 +66,7 @@ namespace mge {
 
 		dim3 thrds(1000, 1);
 		dim3 blcks(lastAllocatedSize / 1000 + 1, 1);
-		gpuClearBufferKernel <<<blcks, thrds >>> (gpuBuffer, buffer->width, buffer->height, p);
+		gpuClearBufferKernel <<<blcks, thrds >>> (gpuBuffer, buffer->width, buffer->height, 1000, p);
 		return true;
 
 	}
@@ -91,31 +100,28 @@ namespace mge {
 
 
 	// This line looks like this ( | )
-	/*bool Rasterizer::drawVerticalLine(int x, int y1, int y2, Pixel p) {
+	bool GPURasterizer::drawVerticalLine(int x, int y1, int y2, Pixel p) {
 		int startY = min(min(y1, y2), buffer->height);
 		int endY = max(max(y1, y2), 0);
-		for (int y = startY; y <= endY; y++)
-		{
-			drawPixel(x, y, p);
-		}
+		uint32_t numPixels = endY + startY;
+		gpuDrawVerticalLine<<<1, numPixels>>>(gpuBuffer, buffer->width, buffer->height, 1024, x, startY, p);
+
 		return true;
-	}*/
+	}
 
 
 	// This line looks like this ( - )
-	/*bool Rasterizer::drawHorizontalLine(int y, int x1, int x2, Pixel p) {
+	bool GPURasterizer::drawHorizontalLine(int y, int x1, int x2, Pixel p) {
 		int startX = min(min(x1, x2), buffer->width);
 		int endX = max(max(x1, x2), 0);
-		for (int x = startX; x <= endX; x++)
-		{
-			drawPixel(x, y, p);
-		}
+		uint32_t numPixels = endX + startX;
+		gpuDrawHorizontalLine << <1, numPixels >> > (gpuBuffer, buffer->width, buffer->height, 1024, y, startX, p);
 		return true;
-	}*/
+	}
 
 
 	// this line looks like ( \ )
-	/*bool Rasterizer::drawFallRightLine(int x1, int y1, int x2, int y2, Pixel p) {
+	bool Rasterizer::drawFallRightLine(int x1, int y1, int x2, int y2, Pixel p) {
 
 		int startX = min(min(x1, x2), buffer->width);
 		int endX = max(max(x1, x2), 0);
@@ -133,7 +139,7 @@ namespace mge {
 		}
 
 		return true;
-	}*/
+	}
 
 
 	// this line looks like ( / )

@@ -56,22 +56,28 @@ namespace mge
 		{
 			time = 0; 
 		}
-
-
-
-
 		rasterizer.initSession(Pixel(0x300300));
+		/*  Start Drawing scope */
+
+
+
 
 
 		rasterizer.drawPixel(10, 10 * time, Pixel(0xFFFFFF));
 		rasterizer.drawPixel(30, 10 * time, Pixel(0xFFFFFF));
+		rasterizer.drawVerticalLine(30, 30, 60, Pixel(0xF00F00));
+		rasterizer.drawHorizontalLine(30, 30, 60, Pixel(0xF00F00));
+
+
+
+
+		/*  End Drawing Scope */
+
+
+
+
 
 		rasterizer.finishSession();
-
-
-
-
-		/* successfully computed */
 		return true;
 	}
 
