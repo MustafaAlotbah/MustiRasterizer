@@ -3,7 +3,7 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include "rasterizer.h"
-
+#include "algebra.h"
 
 
 
@@ -32,9 +32,10 @@ namespace mge {
 		virtual bool drawFallingRightLine(int x1, int y1, int x2, int y2, Pixel p);
 		virtual bool drawFallingLeftLine(int x1, int y1, int x2, int y2, Pixel p);
 
-		virtual bool drawPolygon(int count, int points[][2], PolygonMode mode, Pixel p);
+		virtual bool drawLine(vector2d a, vector2d b, Pixel p);
+		virtual bool drawPolygon(int count, vector2d points[], PolygonMode mode, Pixel p);
 
-		virtual bool FillTriangle(int points[3][2], Pixel p);
+		virtual bool FillTriangle(vector2d points[3], Pixel p);
 
 	public:
 		// buffer inherited from Rasterizer

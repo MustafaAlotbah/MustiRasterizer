@@ -202,17 +202,20 @@ namespace mge {
 	}
 
 
+	bool GPURasterizer::drawLine(vector2d a, vector2d b, Pixel p) {
+		return Rasterizer::drawLine((int)a.x, (int)a.y, (int)b.x, (int)b.y, p);
+	}
 
 
 
-	bool GPURasterizer::drawPolygon(int count, int points[][2], PolygonMode mode, Pixel p) {
+	bool GPURasterizer::drawPolygon(int count, vector2d points[], PolygonMode mode, Pixel p) {
 		for (int i = 0; i < count-1; i++)
 		{
-			drawLine(points[i][0], points[i][1], points[i+1][0], points[i + 1][1], p);
+			drawLine(points[i], points[i+1], p);
 		}
 		if (mode == Connected)
 		{
-			drawLine(points[count - 1][0], points[count - 1][1], points[0][0], points[0][1], p);
+			drawLine(points[count - 1], points[0], p);
 		}
 		return true;
 	}
@@ -220,16 +223,10 @@ namespace mge {
 
 
 
-	struct point
-	{
-		int x=0;
-		int y=0;
-	};
-
 	struct line
 	{
-		point p1;
-		point p2;
+		vector2d p1;
+		vector2d p2;
 	};
 
 	__device__ __host__ int getLineBound(int x, int y, line _line) {
@@ -263,61 +260,59 @@ namespace mge {
 	}
 
 
-	bool GPURasterizer::FillTriangle(int points[3][2], Pixel p) {
+	bool GPURasterizer::FillTriangle(vector2d points[3], Pixel p) {
 
-		int upperY = min(points[0][1], min(points[1][1], points[2][1]));
-		int lowerY = max(points[0][1], max(points[1][1], points[2][1]));
-		int leftX =  min(points[0][0], min(points[1][0], points[2][0]));
-		int rightX = max(points[0][0], max(points[1][0], points[2][0]));
+		int upperY = min(points[0].y, min(points[1].y, points[2].y));
+		int lowerY = max(points[0].y, max(points[1].y, points[2].y));
+		int leftX =  min(points[0].x, min(points[1].x, points[2].x));
+		int rightX = max(points[0].x, max(points[1].x, points[2].x));
 
 
-
+		// draw outlines?
 		//drawLine(leftX, upperY, rightX, upperY, Pixel(0xf0f0f0));
 		//drawLine(leftX, lowerY, rightX, lowerY, Pixel(0xf0f0f0));
 		//drawLine(leftX, upperY, leftX, lowerY, Pixel(0xf0f0f0));
 		//drawLine(rightX, upperY, rightX, lowerY, Pixel(0xf0f0f0));
 
-		int upperPoint[2] = { points[0][0], points[0][1] };
-		int lowerPoint[2] = { points[0][0], points[0][1] };
-		int leftPoint[2] = { points[0][0], points[0][1] };
-		int rightPoint[2] = { points[0][0], points[0][1] };
+		vector2d upperPoint(points[0].x, points[0].y);
+		vector2d lowerPoint(points[0].x, points[0].y );
+		vector2d leftPoint(points[0].x, points[0].y);
+		vector2d rightPoint(points[0].x, points[0].y);
+
+
 
 		for (int i = 0; i < 3; i++)
 		{
-			if (points[i][1] < upperPoint[1])
+			if (points[i].y < upperPoint.y)
 			{
-				upperPoint[0] = points[i][0];
-				upperPoint[1] = points[i][1];
+				upperPoint = points[i];
 			}
-			if (points[i][1] > lowerPoint[1])
+			if (points[i].y > lowerPoint.y)
 			{
-				lowerPoint[0] = points[i][0];
-				lowerPoint[1] = points[i][1];
+				lowerPoint = points[i];
 			}
-			if (points[i][0] > rightPoint[0])
+			if (points[i].x > rightPoint.x)
 			{
-				rightPoint[0] = points[i][0];
-				rightPoint[1] = points[i][1];
+				rightPoint = points[i];
 			}
-			if (points[i][0] < leftPoint[0])
+			if (points[i].x < leftPoint.x)
 			{
-				leftPoint[0] = points[i][0];
-				leftPoint[1] = points[i][1];
+				leftPoint = points[i];
 			}
 		}
 
-		point _up = { upperPoint[0], upperPoint[1] };
-		point _left = { leftPoint[0], leftPoint[1] };
-		point _down = { lowerPoint[0], lowerPoint[1] };
-		point _right = { rightPoint[0], rightPoint[1] };
+		vector2d _up	(upperPoint.x,	upperPoint.y );
+		vector2d _left	(leftPoint.x,	leftPoint.y  );
+		vector2d _down	(lowerPoint.x,	lowerPoint.y );
+		vector2d _right (rightPoint.x,	rightPoint.y );
 
 		if (_left.x == _up.x && _left.y == _up.y)
 		{
 			for (volatile int i = 0; i < 3; i++)
 			{
-				if (/*points[i][0] <= _left.x &&*/ points[i][1] >= _left.y)
+				if (/*points[i][0] <= _left.x &&*/ points[i].y >= _left.y)
 				{
-					_left = { points[i][0], points[i][1] };
+					_left = points[i];
 				}
 			}
 		}
@@ -334,8 +329,7 @@ namespace mge {
 		FillTri<<<blcks+1, 1024>>>(leftX, rightX, upperY, lowerY, _leftLine, _rightLine, _leftLine2, _rightLine2, p);
 	
 
-		drawLine(_leftLine.p1.x, _leftLine.p1.y, _leftLine.p2.x, _leftLine.p2.y, Pixel(0xff0000));
-		//drawLine(_leftLine2.p1.x, _leftLine2.p1.y, _leftLine2.p2.x, _leftLine2.p2.y, Pixel(0x00ff00));
+		drawLine(_leftLine.p1, _leftLine.p2, Pixel(0xff0000));
 
 
 		return true;
