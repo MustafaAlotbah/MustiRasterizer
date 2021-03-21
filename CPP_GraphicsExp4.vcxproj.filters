@@ -47,12 +47,15 @@
     <ClInclude Include="source\gpu_rasterizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\algebra.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="algebra.cu">
+    <CudaCompile Include="source\gpu_rasterizer.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
-    <CudaCompile Include="source\gpu_rasterizer.cu">
+    <CudaCompile Include="source\algebra.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
   </ItemGroup>

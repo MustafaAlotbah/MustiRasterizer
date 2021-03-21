@@ -154,6 +154,7 @@
     <ClCompile Include="source\rasterizer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\algebra.h" />
     <ClInclude Include="source\gpu_rasterizer.h" />
     <ClInclude Include="source\main.h" />
     <ClInclude Include="source\pixel_processor.h" />
@@ -162,7 +163,7 @@
     <ClInclude Include="source\types.h" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="algebra.cu" />
+    <CudaCompile Include="source\algebra.cu" />
     <CudaCompile Include="source\gpu_rasterizer.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

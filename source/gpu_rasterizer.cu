@@ -251,7 +251,6 @@ namespace mge {
 		int i = (blockIdx.x * blockDim.x + threadIdx.x) % (width * height);
 		int x = leftX + (i % width);
 		int y = upperY + (i / width);
-		//gpuDrawPixel(x, y, p);
 		if (
 			x >= getLineBound(x, y, _leftLine)
 			&& x >= getLineBound(x, y, _leftLine2)
@@ -307,22 +306,36 @@ namespace mge {
 			}
 		}
 
-
 		point _up = { upperPoint[0], upperPoint[1] };
 		point _left = { leftPoint[0], leftPoint[1] };
 		point _down = { lowerPoint[0], lowerPoint[1] };
 		point _right = { rightPoint[0], rightPoint[1] };
+
+		if (_left.x == _up.x && _left.y == _up.y)
+		{
+			for (volatile int i = 0; i < 3; i++)
+			{
+				if (/*points[i][0] <= _left.x &&*/ points[i][1] >= _left.y)
+				{
+					_left = { points[i][0], points[i][1] };
+				}
+			}
+		}
+
+
 		line _leftLine = { _up, _left };
 		line _rightLine = { _up, _right };
 		line _leftLine2 = { _down, _left };
 		line _rightLine2 = { _down, _right };
 
 
-
 		int _area = (rightX - leftX) * (lowerY - upperY);
 		int blcks = _area / 1024;
 		FillTri<<<blcks+1, 1024>>>(leftX, rightX, upperY, lowerY, _leftLine, _rightLine, _leftLine2, _rightLine2, p);
 	
+
+		drawLine(_leftLine.p1.x, _leftLine.p1.y, _leftLine.p2.x, _leftLine.p2.y, Pixel(0xff0000));
+		//drawLine(_leftLine2.p1.x, _leftLine2.p1.y, _leftLine2.p2.x, _leftLine2.p2.y, Pixel(0x00ff00));
 
 
 		return true;
