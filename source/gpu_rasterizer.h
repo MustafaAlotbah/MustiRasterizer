@@ -13,22 +13,28 @@ namespace mge {
 	class GPURasterizer : public Rasterizer
 	{
 	public:
+		enum PolygonMode{  Disconnected, Connected, Filled};
+	public:
 		GPURasterizer(VideoBuffer* buffer);
 		~GPURasterizer();
 
 	public:
-		bool initSession(Pixel p = Pixel(0));		// Allocate Buffer to GPU Memory
-		bool finishSession();		// Copy GPU Buffer to CPU Buffer and Free GPU Memory
+
+		virtual bool initSession(Pixel p = Pixel(0));		// Allocate Buffer to GPU Memory
+		virtual bool finishSession();		// Copy GPU Buffer to CPU Buffer and Free GPU Memory
 
 	public:
-		virtual bool drawPixel( int x, int y, Pixel p);
 		virtual bool clearBuffer(Pixel p);
+		// overriding methods
+		virtual bool drawPixel(int x, int y, Pixel p);
+		virtual bool drawVerticalLine(int x, int y1, int y2, Pixel p);
+		virtual bool drawHorizontalLine(int y, int x1, int x2, Pixel p);
+		virtual bool drawFallingRightLine(int x1, int y1, int x2, int y2, Pixel p);
+		virtual bool drawFallingLeftLine(int x1, int y1, int x2, int y2, Pixel p);
 
-			virtual bool drawVerticalLine(int x, int y1, int y2, Pixel p);
-			virtual bool drawHorizontalLine(int y, int x1, int x2, Pixel p);
-			virtual bool drawFallingRightLine(int x1, int y1, int x2, int y2, Pixel p);
-			virtual bool drawFallingLeftLine(int x1, int y1, int x2, int y2, Pixel p);
-		/*	virtual bool drawLine(int x1, int y1, int x2, int y2, Pixel p);*/
+		virtual bool drawPolygon(int count, int points[][2], PolygonMode mode, Pixel p);
+
+		virtual bool FillTriangle(int points[3][2], Pixel p);
 
 	public:
 		// buffer inherited from Rasterizer

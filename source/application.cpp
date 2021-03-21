@@ -13,7 +13,7 @@ Application Space
 #include"application.h"
 #include"pixel_processor.h"
 #include"gpu_rasterizer.h"
-
+#include<cmath>
 
 namespace mge
 {
@@ -44,7 +44,7 @@ namespace mge
 
 
 
-
+	float angle = 0;
 
 	bool Application::OnUpdate(float deltaTime) {
 
@@ -63,9 +63,6 @@ namespace mge
 
 
 
-		rasterizer.drawPixel(10, 10 * time, Pixel(0xFFFFFF));
-		rasterizer.drawPixel(30, 10 * time, Pixel(0xFFFFFF));
-
 
 		//rasterizer.drawVerticalLine(30, 30, 60, Pixel(0xF00F00));
 		//rasterizer.drawHorizontalLine(30, 30, 60, Pixel(0xF00F00));
@@ -80,7 +77,29 @@ namespace mge
 		//rasterizer.drawFallingLeftLine(130, 160, 160, 60, Pixel(0xF00F00));
 
 
-		rasterizer.drawLine(20, 30, 100, 150, Pixel(0xFFFFFF));
+		int points[3][2] = { {200-100, 200}, {200+100, 200+100}, {200-100, 200+100} };
+
+		int center[2] = { 200, 200 };
+
+		angle +=  deltaTime;
+
+		for (int i = 0; i < 3; i++)
+		{
+			int x = points[i][0] - center[0];
+			int y = points[i][1] - center[1];
+			points[i][0] = x * cos(angle) - y * sin(angle);
+			points[i][1] = x * sin(angle) + y * cos(angle);
+			points[i][0] += center[0];
+			points[i][1] += center[1];
+		}
+
+		rasterizer.FillTriangle(points, Pixel(0xf00f00));
+		rasterizer.drawPolygon(3, points, GPURasterizer::PolygonMode::Connected ,Pixel(0xf00f00));
+
+		for (int i = 0; i < 3; i++)
+		{
+			rasterizer.drawPixel(points[i][0], points[i][1], Pixel(0xaaaaFF));
+		}
 
 
 		/*  End Drawing Scope */
