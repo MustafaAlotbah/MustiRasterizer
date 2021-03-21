@@ -60,10 +60,11 @@ namespace mge
 
 
 
-		rasterizer.initSession();
+		rasterizer.initSession(Pixel(0x300300));
 
 
 		rasterizer.drawPixel(10, 10 * time, Pixel(0xFFFFFF));
+		rasterizer.drawPixel(30, 10 * time, Pixel(0xFFFFFF));
 
 		rasterizer.finishSession();
 

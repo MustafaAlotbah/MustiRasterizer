@@ -15,6 +15,8 @@
 #include "gpu_rasterizer.h"
 
 
+
+
 namespace mge {
 
 
@@ -25,13 +27,17 @@ namespace mge {
 	}
 
 	__global__ void gpuClearBufferKernel(void* gpuBuffer, int width, int height, Pixel p) {
-		int x = threadIdx.x; 
-		*((uint32_t*)gpuBuffer + x) = p.color.value;
+		//int i = threadIdx.x; 
+		//*((uint32_t*)gpuBuffer + i) = 0xFF00FF;//p.color.value;
+
+		gpuDrawPixel(gpuBuffer, width, height, threadIdx.x + 1000*blockIdx.x % (width * height), height-1, p);
 	}
 
 	__global__ void gpuDrawPixelKernel(void* gpuBuffer, int width, int height, int x, int y, Pixel p) {
 		gpuDrawPixel(gpuBuffer, width, height, x, y, p);
 	}
+
+
 
 
 
@@ -47,14 +53,19 @@ namespace mge {
 	GPURasterizer::~GPURasterizer(){
 	}
 
-	bool GPURasterizer::initSession() {
+	bool GPURasterizer::clearBuffer(Pixel p) {
+
+		dim3 thrds(1000, 1);
+		dim3 blcks(lastAllocatedSize / 1000 + 1, 1);
+		gpuClearBufferKernel <<<blcks, thrds >>> (gpuBuffer, buffer->width, buffer->height, p);
+		return true;
+
+	}
+	bool GPURasterizer::initSession(Pixel p) {
 		lastAllocatedSize = buffer->height * buffer->width;
 		// allocate GPU Memory (will be disposed of by finishing the session
 		cudaMalloc((void**)&gpuBuffer, sizeof(uint32_t) * lastAllocatedSize) ;
-
-		// clear the memory (doesn't seem to be important now)
-		//gpuClearBufferKernel <<<1, lastAllocatedSize >>> (gpuBuffer, buffer->width, buffer->height, Pixel(0xFF00FF));
-
+		clearBuffer(p);
 		return true;
 	}
 

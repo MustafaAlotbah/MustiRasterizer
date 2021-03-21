@@ -15,8 +15,8 @@ namespace mge
 	typedef struct VideoBufferStruct
 	{
 		void* addr;			// address of the first pixel (bottom right)
-		int width;
-		int height;
+		unsigned int width;
+		unsigned int height;
 		BITMAPINFO bitmapInfo;
 	} VideoBuffer;
 
