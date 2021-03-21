@@ -232,9 +232,13 @@ namespace mge {
 		point p2;
 	};
 
-	__device__ __host__ int getLineBound(int y, line _line) {
+	__device__ __host__ int getLineBound(int x, int y, line _line) {
 		float y1 = _line.p1.y, y2 = _line.p2.y;
 		float x1 = _line.p1.x, x2 = _line.p2.x;
+		if (y1 == y2)
+		{
+			return x;
+		}
 		return x1 + ((y - y1) * (x2 - x1)) / (y2 - y1 + 0.0001f);
 		return 1;
 	}
@@ -249,10 +253,10 @@ namespace mge {
 		int y = upperY + (i / width);
 		//gpuDrawPixel(x, y, p);
 		if (
-			x > getLineBound(y, _leftLine)
-			&& x > getLineBound(y, _leftLine2)
-			&& x < getLineBound(y, _rightLine)
-			&& x < getLineBound(y, _rightLine2)
+			x >= getLineBound(x, y, _leftLine)
+			&& x >= getLineBound(x, y, _leftLine2)
+			&& x <= getLineBound(x, y, _rightLine)
+			&& x <= getLineBound(x, y, _rightLine2)
 			)
 		{
 			gpuDrawPixel(x, y, p);
@@ -269,10 +273,10 @@ namespace mge {
 
 
 
-		drawLine(leftX, upperY, rightX, upperY, Pixel(0xf0f0f0));
-		drawLine(leftX, lowerY, rightX, lowerY, Pixel(0xf0f0f0));
-		drawLine(leftX, upperY, leftX, lowerY, Pixel(0xf0f0f0));
-		drawLine(rightX, upperY, rightX, lowerY, Pixel(0xf0f0f0));
+		//drawLine(leftX, upperY, rightX, upperY, Pixel(0xf0f0f0));
+		//drawLine(leftX, lowerY, rightX, lowerY, Pixel(0xf0f0f0));
+		//drawLine(leftX, upperY, leftX, lowerY, Pixel(0xf0f0f0));
+		//drawLine(rightX, upperY, rightX, lowerY, Pixel(0xf0f0f0));
 
 		int upperPoint[2] = { points[0][0], points[0][1] };
 		int lowerPoint[2] = { points[0][0], points[0][1] };
@@ -303,18 +307,6 @@ namespace mge {
 			}
 		}
 
-		/*int leftLine[2][2] = {
-			{upperPoint[0],upperPoint[1] },
-			{leftPoint[0],leftPoint[1] } };
-		int rightLine[2][2] = {
-			{upperPoint[0],upperPoint[1] },
-			{rightPoint[0],rightPoint[1] } };
-		int leftLine2[2][2] = {
-			{lowerPoint[0],lowerPoint[1] },
-			{leftPoint[0],leftPoint[1] } };
-		int rightLine2[2][2] = {
-			{lowerPoint[0],lowerPoint[1] },
-			{rightPoint[0],rightPoint[1] } };*/
 
 		point _up = { upperPoint[0], upperPoint[1] };
 		point _left = { leftPoint[0], leftPoint[1] };
@@ -330,19 +322,7 @@ namespace mge {
 		int _area = (rightX - leftX) * (lowerY - upperY);
 		int blcks = _area / 1024;
 		FillTri<<<blcks+1, 1024>>>(leftX, rightX, upperY, lowerY, _leftLine, _rightLine, _leftLine2, _rightLine2, p);
-		//for (int x = leftX; x < rightX; x++)
-		//{
-		//	for (int y = upperY; y < lowerY; y++)
-		//	{
-		//		if (
-		//			x > getLineBound(y, leftLine) 
-		//			//&& x < getlinebound(y, rightline)
-		//			)
-		//		{
-		//			drawPixel(x, y, Pixel(0xff00ff));
-		//		}
-		//	}
-		//}
+	
 
 
 		return true;

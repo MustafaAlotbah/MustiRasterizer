@@ -51,6 +51,7 @@ namespace mge
 
 		/* dummy animation */
 		time = time + deltaTime;
+		angle += 2 * deltaTime;
 		
 		if (time > 5)
 		{
@@ -63,26 +64,12 @@ namespace mge
 
 
 
-
-		//rasterizer.drawVerticalLine(30, 30, 60, Pixel(0xF00F00));
-		//rasterizer.drawHorizontalLine(30, 30, 60, Pixel(0xF00F00));
-
-
-		//rasterizer.drawFallingRightLine(30, 30, 60, 60, Pixel(0xF00F00));
-		//rasterizer.drawFallingRightLine(30, 30, 100, 60, Pixel(0xF00F00));
-		//rasterizer.drawFallingRightLine(30, 30, 60, 100, Pixel(0xF00F00));
-
-		//rasterizer.drawFallingLeftLine(130, 160, 160, 130, Pixel(0xF00F00));
-		//rasterizer.drawFallingLeftLine(130, 160, 260, 130, Pixel(0xF00F00));
-		//rasterizer.drawFallingLeftLine(130, 160, 160, 60, Pixel(0xF00F00));
-
-
+		// set three points
 		int points[3][2] = { {200-100, 200}, {200+100, 200+100}, {200-100, 200+100} };
-
+		// set some center point
 		int center[2] = { 200, 200 };
 
-		angle +=  deltaTime;
-
+		// perform rotation
 		for (int i = 0; i < 3; i++)
 		{
 			int x = points[i][0] - center[0];
@@ -93,8 +80,9 @@ namespace mge
 			points[i][1] += center[1];
 		}
 
+		// fill in the triangle
 		rasterizer.FillTriangle(points, Pixel(0xf00f00));
-		rasterizer.drawPolygon(3, points, GPURasterizer::PolygonMode::Connected ,Pixel(0xf00f00));
+		rasterizer.drawPolygon(3, points, GPURasterizer::PolygonMode::Connected ,Pixel(0xffffff));
 
 		for (int i = 0; i < 3; i++)
 		{
