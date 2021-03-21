@@ -54,7 +54,7 @@ namespace mge
 		
 		if (time > 5)
 		{
-			time = 0;
+			time = 0; 
 		}
 
 		for (int y = 0; y < this->videoBuffer->height; y++)
