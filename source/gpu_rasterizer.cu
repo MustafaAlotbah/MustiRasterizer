@@ -56,10 +56,32 @@ namespace mge {
 		gpuDrawPixel(xMin + blockIdx.x * blockDim.x + threadIdx.x, y, p);
 	}
 
-	// draws a line like this ( \ )
-	__global__ void gpuDrawFallingRightLine(int y, int xMin, Pixel p) {
-		gpuDrawPixel(xMin + blockIdx.x * blockDim.x + threadIdx.x, y, p);
+	// with dx > dy (operating on x-axis)
+	__global__ void gpuDrawFallingRightLineDx(int xMin, int yMin, float dx , float dy, Pixel p) {
+		float y = yMin + (threadIdx.x) * (dy / dx);
+		gpuDrawPixel(threadIdx.x + xMin, y, p);
 	}
+
+	// with dx < dy (operating on y-axis)
+	__global__ void gpuDrawFallingRightLineDy(int xMin, int yMin, float dx, float dy, Pixel p) {
+		float x = xMin + (threadIdx.x) * (dx / dy);
+		gpuDrawPixel(x, threadIdx.x + yMin, p);
+	}
+
+
+	// with dx > dy (operating on x-axis)
+	__global__ void gpuDrawFallingLeftLineDx(int xMin, int yMax, float dx, float dy, Pixel p) {
+		float y = yMax - (threadIdx.x) * (dy / dx);
+		gpuDrawPixel(threadIdx.x + xMin, y, p);
+	}
+
+
+	// with dx > dy (operating on x-axis)
+	__global__ void gpuDrawFallingLeftLineDy(int xMax, int yMin, float dx, float dy, Pixel p) {
+		float x = xMax - (threadIdx.x) * (dx / dy);
+		gpuDrawPixel(x, threadIdx.x + yMin, p);
+	}
+	
 
 
 
@@ -138,86 +160,50 @@ namespace mge {
 
 
 	// this line looks like ( \ )
-	/*bool Rasterizer::drawFallRightLine(int x1, int y1, int x2, int y2, Pixel p) {
+	bool GPURasterizer::drawFallingRightLine(int x1, int y1, int x2, int y2, Pixel p) {
 
-		int startX = min(min(x1, x2), buffer->width);
-		int endX = max(max(x1, x2), 0);
+		int minX = min(min(x1, x2), buffer->width);
+		int maxX = max(max(x1, x2), 0);
 
-		int startY = min(min(y1, y2), buffer->height);
-		int endY = max(max(y1, y2), 0);
+		int minY = min(min(y1, y2), buffer->height);
+		int maxY = max(max(y1, y2), 0);
 
-		int currY = startY;
-		int prevY = startY;
-		for (int x = startX; x <= endX; x++)
-		{
-			currY = startY + (x - startX) * (float(endY - startY) / float(endX - startX));
-			drawVerticalLine(x, prevY, currY, p);
-			prevY = currY;
-		}
+		float dx = maxX - minX;
+		float dy = maxY - minY;
+
+		if (dx >= dy) 
+			gpuDrawFallingRightLineDx <<<1, dx>>> (minX, minY, dx, dy, p);
+		else 
+			gpuDrawFallingRightLineDy <<<1, dy >>> (minX, minY, dx, dy, p);
+
 
 		return true;
-	}*/
+	}
 
 
 	// this line looks like ( / )
-	/*bool Rasterizer::drawFallLeftLine(int x1, int y1, int x2, int y2, Pixel p) {
+	bool GPURasterizer::drawFallingLeftLine(int x1, int y1, int x2, int y2, Pixel p) {
 
 		int xMin = min(min(x1, x2), buffer->width);
 		int xMax = max(max(x1, x2), 0);
 
-		int yMax = max(max(y1, y2), 0);
 		int yMin = min(min(y1, y2), buffer->height);
+		int yMax = max(max(y1, y2), 0);
 
-		int currY = yMax;
-		int prevY = yMax;
-		int f;
-		for (int x = xMin; x <= xMax; x++)
-		{
-			currY = yMax - (x - xMin) * (float(yMax - yMin) / float(xMax - xMin));
-			drawVerticalLine(x, prevY, currY, p);
-			prevY = currY;
-		}
-		return true;
-	}*/
+		float dx = xMax - xMin;
+		float dy = yMax - yMin;
 
 
-
-	/*bool Rasterizer::drawLine(int x1, int y1, int x2, int y2, Pixel p) {
-
-		if (x1 == x2)
-		{
-			return drawVerticalLine(x1, y1, y2, p);
-		}
-		else if (y1 == y2)
-		{
-			return drawHorizontalLine(y1, x1, x2, p);
-		}
+		if (dx >= dy)
+			gpuDrawFallingLeftLineDx << <1, dx >> > (xMin, yMax, dx, dy, p);
 		else
-		{
-			int dx = x2 - x1;
-			int dy = y2 - y1;
-
-			if (dx > 0 && dy > 0)
-			{
-				return drawFallRightLine(x1, y1, x2, y2, p);
-			}
-			else if (dx < 0 && dy < 0) {
-				return drawFallRightLine(x2, y2, x1, y1, p);
-			}
-			else if (dx > 0 && dy < 0) {
-				return drawFallLeftLine(x1, y1, x2, y2, p);
-			}
-			else {
-				return drawFallLeftLine(x2, y2, x1, y1, p);
-			}
-
-		}
-
-
-
+			gpuDrawFallingLeftLineDy << <1, dy >> > (xMax, yMin, dx, dy, p);
 
 		return true;
-	}*/
+	}
+
+
+
 
 
 

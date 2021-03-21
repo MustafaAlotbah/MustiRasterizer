@@ -65,10 +65,22 @@ namespace mge
 
 		rasterizer.drawPixel(10, 10 * time, Pixel(0xFFFFFF));
 		rasterizer.drawPixel(30, 10 * time, Pixel(0xFFFFFF));
-		rasterizer.drawVerticalLine(30, 30, 60, Pixel(0xF00F00));
-		rasterizer.drawHorizontalLine(30, 30, 60, Pixel(0xF00F00));
 
 
+		//rasterizer.drawVerticalLine(30, 30, 60, Pixel(0xF00F00));
+		//rasterizer.drawHorizontalLine(30, 30, 60, Pixel(0xF00F00));
+
+
+		//rasterizer.drawFallingRightLine(30, 30, 60, 60, Pixel(0xF00F00));
+		//rasterizer.drawFallingRightLine(30, 30, 100, 60, Pixel(0xF00F00));
+		//rasterizer.drawFallingRightLine(30, 30, 60, 100, Pixel(0xF00F00));
+
+		//rasterizer.drawFallingLeftLine(130, 160, 160, 130, Pixel(0xF00F00));
+		//rasterizer.drawFallingLeftLine(130, 160, 260, 130, Pixel(0xF00F00));
+		//rasterizer.drawFallingLeftLine(130, 160, 160, 60, Pixel(0xF00F00));
+
+
+		rasterizer.drawLine(20, 30, 100, 150, Pixel(0xFFFFFF));
 
 
 		/*  End Drawing Scope */
