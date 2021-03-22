@@ -25,18 +25,23 @@ namespace mge
 	GPURasterizer rasterizer = 0;
 
 
+	/*  Global Variables  */
+	float time = 0;
+	float angle = 0;
+	mesh m;
+
 	/*  The work of the rasterizer  */
 	bool Application::OnLoad() {
 		// initialize the rasterizer
 		rasterizer = GPURasterizer(this->videoBuffer);
+
+
+
+		m.loadFromFile("./teapot.obj");
 		return true;
 	}
 
 
-
-	/*  Global Variables  */
-	float time = 0;
-	float angle = 0;
 
 
 
@@ -186,20 +191,25 @@ namespace mge
 
 
 
-		vector4d cube_faces[6][4] = {
-			{cube_vecs[0],	cube_vecs[1],	cube_vecs[2],	cube_vecs[3]},		//near
-			{cube_vecs[4],	cube_vecs[5],	cube_vecs[6],	cube_vecs[7]},		//far
-			{cube_vecs[0],	cube_vecs[1],	cube_vecs[4],	cube_vecs[5]},		//bottom
-			{cube_vecs[2],	cube_vecs[3],	cube_vecs[6],	cube_vecs[7]},		//top
-			{cube_vecs[3],	cube_vecs[0],	cube_vecs[5],	cube_vecs[6]},	//left
-			{cube_vecs[1],	cube_vecs[2],	cube_vecs[7],	cube_vecs[4]},	//right
-		};
+		//vector4d cube_faces[6][4] = {
+		//	{cube_vecs[0],	cube_vecs[1],	cube_vecs[2],	cube_vecs[3]},		//near
+		//	{cube_vecs[4],	cube_vecs[5],	cube_vecs[6],	cube_vecs[7]},		//far
+		//	{cube_vecs[0],	cube_vecs[1],	cube_vecs[4],	cube_vecs[5]},		//bottom
+		//	{cube_vecs[2],	cube_vecs[3],	cube_vecs[6],	cube_vecs[7]},		//top
+		//	{cube_vecs[3],	cube_vecs[0],	cube_vecs[5],	cube_vecs[6]},	//left
+		//	{cube_vecs[1],	cube_vecs[2],	cube_vecs[7],	cube_vecs[4]},	//right
+		//};
+
+
+
+
+
 
 
 		// fill in the triangle
 		//rasterizer.FillTriangle(_vectors, Pixel(0xf00f00));
 
-		for (int i = 0; i < 6; i++)
+		/*for (int i = 0; i < 6; i++)
 		{
 			vector2d _vectors[4] = {
 				vector2d(cube_faces[i][0]),
@@ -208,7 +218,38 @@ namespace mge
 				vector2d(cube_faces[i][3])
 			};
 			rasterizer.drawPolygon(4, _vectors, GPURasterizer::PolygonMode::Connected, Pixel(0xffffff));
+		}*/
+
+
+
+		mesh _m = m;
+
+
+
+		int count = _m.triags.size();
+		for (int i = 0; i < count; i++)
+		{
+			// transform
+			for (int v = 0; v < 3; v++)
+			{
+				_m.triags[i].vectors[v] *= 30;
+				_m.triags[i].vectors[v] = rotatez * _m.triags[i].vectors[v];
+				_m.triags[i].vectors[v] = orthoPorj1 * _m.triags[i].vectors[v];
+				_m.triags[i].vectors[v] = _m.triags[i].vectors[v] *
+					vector4d(videoBuffer->width / 2 / scale, videoBuffer->height / 2 / scale, 1, 1) +
+					vector4d(videoBuffer->width / 2, videoBuffer->height / 2, 0, 0);
+			}
+			vector2d _vectors[3] = {
+				vector2d(_m.triags[i].vectors[0]),
+				vector2d(_m.triags[i].vectors[1]),
+				vector2d(_m.triags[i].vectors[2])
+			};
+			rasterizer.drawPolygon(3, _vectors, GPURasterizer::PolygonMode::Connected, Pixel(0xffffff));
 		}
+
+
+
+
 
 
 		int val = 1.0f/deltaTime;

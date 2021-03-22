@@ -11,7 +11,7 @@
 namespace mge {
 	
 
-	mesh2d zero = {
+	path2d zero = {
 		std::vector<vector2d>{
 			vector2d(-CHAR_HALF_WIDTH, CHAR_HALF_HEIGHT * 0.7),
 			vector2d(0, CHAR_HALF_HEIGHT),
@@ -24,7 +24,7 @@ namespace mge {
 	};
 
 
-	mesh2d one = {
+	path2d one = {
 		std::vector<vector2d>{
 			vector2d(-CHAR_HALF_WIDTH, -CHAR_HALF_HEIGHT * 0.7),
 			vector2d(0, -CHAR_HALF_HEIGHT),
@@ -32,7 +32,7 @@ namespace mge {
 		}
 	};
 
-	mesh2d two = {
+	path2d two = {
 		std::vector<vector2d>{
 			vector2d(-CHAR_HALF_WIDTH, -CHAR_HALF_HEIGHT * 0.7),
 			vector2d(0, -CHAR_HALF_HEIGHT),
@@ -42,7 +42,7 @@ namespace mge {
 		}
 	};
 
-	mesh2d three = {
+	path2d three = {
 		std::vector<vector2d>{
 			vector2d(-CHAR_HALF_WIDTH, -CHAR_HALF_HEIGHT),
 			vector2d(CHAR_HALF_WIDTH, -CHAR_HALF_HEIGHT),
@@ -52,7 +52,7 @@ namespace mge {
 		}
 	};
 
-	mesh2d four = {
+	path2d four = {
 		std::vector<vector2d>{
 			vector2d(-CHAR_HALF_WIDTH, -CHAR_HALF_HEIGHT),
 			vector2d(-CHAR_HALF_WIDTH, 0),
@@ -61,7 +61,7 @@ namespace mge {
 			vector2d(CHAR_HALF_WIDTH, CHAR_HALF_HEIGHT),
 		}
 	};
-	mesh2d five = {
+	path2d five = {
 		std::vector<vector2d>{
 			vector2d(CHAR_HALF_WIDTH, -CHAR_HALF_HEIGHT),
 			vector2d(-CHAR_HALF_WIDTH, -CHAR_HALF_HEIGHT),
@@ -72,7 +72,7 @@ namespace mge {
 		}
 	};
 
-	mesh2d six = {
+	path2d six = {
 		std::vector<vector2d>{
 			vector2d(0, -CHAR_HALF_HEIGHT),
 			vector2d(-CHAR_HALF_WIDTH,  CHAR_HALF_HEIGHT),
@@ -80,14 +80,14 @@ namespace mge {
 			vector2d(0,  0),
 		}
 	};
-	mesh2d seven = {
+	path2d seven = {
 		std::vector<vector2d>{
 			vector2d(-CHAR_HALF_WIDTH, -CHAR_HALF_HEIGHT),
 			vector2d(CHAR_HALF_WIDTH, -CHAR_HALF_HEIGHT),
 			vector2d(0,  CHAR_HALF_HEIGHT),
 		}
 	};
-	mesh2d eight = {
+	path2d eight = {
 		std::vector<vector2d>{
 			vector2d(-CHAR_HALF_WIDTH, -CHAR_HALF_HEIGHT),
 			vector2d(CHAR_HALF_WIDTH, -CHAR_HALF_HEIGHT),
@@ -96,7 +96,7 @@ namespace mge {
 			vector2d(-CHAR_HALF_WIDTH, -CHAR_HALF_HEIGHT),
 		}
 	};
-	mesh2d nine = {
+	path2d nine = {
 		std::vector<vector2d>{
 			vector2d(CHAR_HALF_WIDTH, 0),
 			vector2d(-CHAR_HALF_WIDTH, -CHAR_HALF_HEIGHT),
@@ -109,7 +109,7 @@ namespace mge {
 
 
 
-	std::vector<mesh2d> chars = {zero, one, two, three, four, five, six, seven, eight, nine};
+	std::vector<path2d> chars = {zero, one, two, three, four, five, six, seven, eight, nine};
 
 	uint32_t x;
 
