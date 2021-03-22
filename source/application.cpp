@@ -19,6 +19,11 @@ Application Space
 namespace mge
 {
 
+
+	/*  Global Graphics Classes  */
+	GPURasterizer rasterizer = 0;
+
+
 	/*  The work of the rasterizer  */
 	bool Application::OnLoad() {
 		// initialize the rasterizer
@@ -28,9 +33,7 @@ namespace mge
 
 
 
-
-	/*  Globals  */
-	GPURasterizer rasterizer = 0;
+	/*  Global Variables  */
 	float time = 0;
 	float angle = 0;
 
@@ -55,8 +58,6 @@ namespace mge
 		/* dummy animation */
 		time = time + deltaTime;
 		angle += 2 * deltaTime;
-		matrix2d rotationMatrix(cos(angle), -sin(angle), sin(angle), cos(angle));
-		
 		if (time > 5)
 		{
 			time = 0; 
@@ -68,8 +69,7 @@ namespace mge
 
 
 
-		// set three points
-		// set some center point
+
 
 		vector2d vectors[3] = {
 			vector2d(200 - 100, 200), 
@@ -78,6 +78,11 @@ namespace mge
 		};
 
 		vector2d center(200, 200);
+
+		matrix3d mat = matrix3d();
+
+
+		matrix2d rotationMatrix(cos(angle), -sin(angle), sin(angle), cos(angle));
 
 		// perform rotation
 		for (int i = 0; i < 3; i++)
@@ -90,7 +95,6 @@ namespace mge
 
 
 		// fill in the triangle
-
 		rasterizer.FillTriangle(vectors, Pixel(0xf00f00));
 		rasterizer.drawPolygon(3, vectors, GPURasterizer::PolygonMode::Connected, Pixel(0xffffff));
 		for (int i = 0; i < 3; i++)
@@ -99,12 +103,20 @@ namespace mge
 		}
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 		/*  End Drawing Scope */
-
-
-
-
-
 		rasterizer.finishSession();
 		return true;
 	}

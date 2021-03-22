@@ -31,7 +31,7 @@ namespace mge {
 		__gpu_height = height;
 	}
 
-	__device__ void gpuDrawPixel(int x, int y, Pixel p) {
+	__device__ __host__ void gpuDrawPixel(int x, int y, Pixel p) {
 		y = __gpu_height - y - 1;	// correct the orientation
 		*((uint32_t*)__gpu_buffer + y * __gpu_width + x) = p.color.value;
 	}
