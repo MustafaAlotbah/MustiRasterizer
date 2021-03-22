@@ -14,6 +14,7 @@ Application Space
 #include"pixel_processor.h"
 #include"gpu_rasterizer.h"
 #include"algebra.h"
+#include"print.h"
 #include<cmath>
 
 namespace mge
@@ -68,10 +69,10 @@ namespace mge
 
 		// cube 
 		vector4d cube_vecs[8] = {
-			vector4d(-1,	1,		0, 1) * 30.0f,
-			vector4d(1,		1,		0, 1) * 30.0f,
-			vector4d(1,		-1,		0, 1) * 30.0f,
-			vector4d(-1,	-1,		0, 1) * 30.0f,
+			vector4d(-1,	1,		-1, 1) * 30.0f,
+			vector4d(1,		1,		-1, 1) * 30.0f,
+			vector4d(1,		-1,		-1, 1) * 30.0f,
+			vector4d(-1,	-1,		-1, 1) * 30.0f,
 
 			vector4d(1,		1,		1, 1) * 30.0f,
 			vector4d(-1,	1,		1, 1) * 30.0f,
@@ -123,6 +124,13 @@ namespace mge
 		};
 		matrix4d rotate(_rotate);
 
+		float _rotatez[4][4] = {
+			{cos(angle),	0,	-sin(angle), 0},
+			{0,				1,				0, 0},
+			{sin(angle),	0,		cos(angle), 0},
+			{0,				0,				0, 1}
+		};
+		matrix4d rotatez(_rotatez);
 
 		float _shear[4][4] = {
 			{1,	-0.5* time, 0, 0},
@@ -134,22 +142,31 @@ namespace mge
 
 
 		float _orthoPorj1[4][4] = {
-			{1,	0,	-0.4, 0},
-			{0,	1,	-0.4, 0},
+			{1,	0,	-0.3, 0},
+			{0,	1,	-0.2, 0},
 			{0,	0,	0, 0},
 			{0,	0,	0, 1}
 		};
 		matrix4d orthoPorj1(_orthoPorj1);
 
 
+		float _perspectiveProj1[4][4] = {
+			{1,	0,	-0.3, 0},
+			{0,	1,	-0.2, 0},
+			{0,	0,	0, 0},
+			{0,	0,	0, 1}
+		};
+		matrix4d perspectiveProj1(_perspectiveProj1);
 
 		// perform rotation
 		for (int i = 0; i < 8; i++)
 		{
 			//vectors[i] -= center;
 			//vectors[i] =  translate  * vectors[i];
-			cube_vecs[i] = rotate * cube_vecs[i];
 			//vectors[i] = shear * vectors[i];
+
+			cube_vecs[i] = rotatez * cube_vecs[i];
+
 			cube_vecs[i] = orthoPorj1 * cube_vecs[i];
 
 			//vectors[i] += center;
@@ -194,11 +211,24 @@ namespace mge
 		}
 
 
-		/*for (int i = 0; i < 3; i++)
-		{
-			rasterizer.drawPixel(_vectors[i].x,_vectors[i].y, Pixel(0xaaaaFF));
-		}*/
-
+		int val = 1.0f/deltaTime;
+		int scale = 16;
+		int offset = 0;
+		rasterizer.drawPolygon(
+			translateScale(chars[(val/100) % 10], 20, vector2d(scale + offset, 40)).vectors,
+			GPURasterizer::PolygonMode::Disconnected, Pixel(0xffffff)
+		);
+		offset += scale + scale/2;
+		rasterizer.drawPolygon(
+			translateScale(chars[(val / 10) % 10], 20, vector2d(scale + offset, 40)).vectors,
+			GPURasterizer::PolygonMode::Disconnected, Pixel(0xffffff)
+		);
+		offset += scale + scale / 2;
+		rasterizer.drawPolygon(
+			translateScale(chars[val % 10], 20, vector2d(scale + offset, 40)).vectors,
+			GPURasterizer::PolygonMode::Disconnected, Pixel(0xffffff)
+		);
+		offset += scale + scale / 2;
 
 
 

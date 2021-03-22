@@ -27,6 +27,12 @@
     <ClCompile Include="source\rasterizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\geometry_processor.cu">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\print.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\application.h">
@@ -48,6 +54,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\algebra.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\geometry_processor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\print.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,7 +5,7 @@ This should deal with pixel manipulations
 */
 
 #include"types.h"
-
+#include<vector>
 
 namespace mge
 {

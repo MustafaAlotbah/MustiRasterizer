@@ -223,6 +223,17 @@ namespace mge {
 	}
 
 
+	bool GPURasterizer::drawPolygon(std::vector<vector2d> points, PolygonMode mode, Pixel p) {
+		for (int i = 0; i < points.size() - 1; i++)
+		{
+			drawLine(points[i], points[i + 1], p);
+		}
+		if (mode == Connected)
+		{
+			drawLine(points[points.size() - 1], points[0], p);
+		}
+		return true;
+	}
 
 
 	struct line

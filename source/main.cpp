@@ -24,6 +24,7 @@ HMENU:			handle to a drop down menu.
 /*     PRIVATE VARIABLES      */
 bool isRunning = true;
 mge::VideoBuffer videoBuffer;
+int maxFrequency = 600;
 
 
 /*			FUNCTIONS			*/
@@ -146,8 +147,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE _null, LPSTR lpszArgument, int
 		}
 
 		/*------------- SIMULATE-------------*/
+		if (1.0/deltaTime <= maxFrequency)
+		{
+			application.OnUpdate(deltaTime);
+		}
 
-		application.OnUpdate(deltaTime);
 
 
 
@@ -168,8 +172,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE _null, LPSTR lpszArgument, int
 		/*------------- UPDATE PARAMETERS --------------*/
 		QueryPerformanceCounter(&endTime);
 		deltaTime = (endTime.QuadPart - startTime.QuadPart) / performanceFreq;
-		startTime = endTime;
-
+		if (1.0 / deltaTime <= maxFrequency)
+		{
+			startTime = endTime;
+		}
 
 	}
 
