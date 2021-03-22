@@ -457,9 +457,9 @@ namespace mge {
 
 	
 	__device__ __host__ matrix3d::matrix3d(float data[3][3]){
-		a11 = data[0][0]; a12 = data[1][0]; a13 = data[2][0];
-		a21 = data[0][1]; a22 = data[1][1]; a23 = data[2][1];
-		a31 = data[0][2]; a32 = data[1][2]; a33 = data[2][2];
+		a11 = data[0][0]; a12 = data[0][1]; a13 = data[0][2];
+		a21 = data[1][0]; a22 = data[1][1]; a23 = data[1][2];
+		a31 = data[2][0]; a32 = data[2][1]; a33 = data[2][2];
 	}
 
 
@@ -856,12 +856,12 @@ namespace mge {
 
 
 	__device__ __host__ matrix4d::matrix4d(float data[4][4]) {
-		a11 = data[0][0]; a12 = data[1][0]; a13 = data[2][0]; a14 = data[3][0];
-		a21 = data[0][1]; a22 = data[1][1]; a23 = data[2][1]; a24 = data[3][1];
-		a31 = data[0][2]; a32 = data[1][2]; a33 = data[2][2]; a34 = data[3][2];
-		a41 = data[0][3]; a42 = data[1][3]; a43 = data[2][3]; a44 = data[3][3];
+		a11 = data[0][0]; a12 = data[0][1]; a13 = data[0][2]; a14 = data[0][3];
+		a21 = data[1][0]; a22 = data[1][1]; a23 = data[1][2]; a24 = data[1][3];
+		a31 = data[2][0]; a32 = data[2][1]; a33 = data[2][2]; a34 = data[2][3];
+		a41 = data[3][0]; a42 = data[3][1]; a43 = data[3][2]; a44 = data[3][3];
 	}
-
+	 
 
 
 	__device__ __host__ matrix4d& matrix4d::operator = (const float i) {
@@ -1100,7 +1100,8 @@ namespace mge {
 		float y = a21 * v.x + a22 * v.y + a23 * v.z + a24 * v.w;
 		float z = a31 * v.x + a32 * v.y + a33 * v.z + a34 * v.w;
 		float w = a41 * v.x + a42 * v.y + a43 * v.z + a44 * v.w;
-		return vector4d(x, y, z, w);
+		vector4d temp = vector4d(x, y, z, w);
+		return temp;
 	}
 
 

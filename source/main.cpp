@@ -71,7 +71,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE _null, LPSTR lpszArgument, int
 		L"Graphics Engine build 3",
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 		CW_USEDEFAULT, CW_USEDEFAULT,
-		600, 600, 0, 0, hInstance, 0
+		800, 800, 0, 0, hInstance, 0
 	);
 
 

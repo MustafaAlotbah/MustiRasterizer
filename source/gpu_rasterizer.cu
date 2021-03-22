@@ -33,11 +33,13 @@ namespace mge {
 
 	__device__ __host__ void gpuDrawPixel(int x, int y, Pixel p) {
 		y = __gpu_height - y - 1;	// correct the orientation
+		if( y <__gpu_height && y >= 0 && x >= 0 && x <= __gpu_width)
 		*((uint32_t*)__gpu_buffer + y * __gpu_width + x) = p.color.value;
 	}
 
 	__global__ void gpuClearBufferKernel(Pixel p) {
-		gpuDrawPixel(threadIdx.x + blockDim.x * blockIdx.x % (__gpu_width * __gpu_height), __gpu_height -1, p);
+		int i = threadIdx.x + blockDim.x * blockIdx.x % (__gpu_width * __gpu_height);
+		*((uint32_t*)__gpu_buffer + i) = p.color.value;
 	}
 
 	__global__ void gpuDrawPixelKernel(int x, int y, Pixel p) {
