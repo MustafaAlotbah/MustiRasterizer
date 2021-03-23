@@ -4,6 +4,7 @@
 #include "device_launch_parameters.h"
 #include "rasterizer.h"
 #include "algebra.h"
+#include "geometry_processor.h"
 #include <vector>
 
 
@@ -36,8 +37,10 @@ namespace mge {
 		virtual bool drawLine(vector2d a, vector2d b, Pixel p);
 		virtual bool drawPolygon(int count, vector2d points[], PolygonMode mode, Pixel p);
 		virtual bool drawPolygon(std::vector<vector2d> points, PolygonMode mode, Pixel p);
+		virtual bool drawMesh(Mesh m, Pixel p);
 
 		virtual bool FillTriangle(vector2d points[3], Pixel p);
+
 
 	public:
 		// buffer inherited from Rasterizer

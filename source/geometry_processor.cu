@@ -16,7 +16,7 @@ namespace mge {
 
 
 
-	path4d::path4d(vector4d a, vector4d b, vector4d c) {
+	__device__ __host__ path4d::path4d(vector4d a, vector4d b, vector4d c) {
 		vectors.push_back(a);
 		vectors.push_back(b);
 		vectors.push_back(c);
@@ -25,7 +25,7 @@ namespace mge {
 
 	// thanks to javidx9 (olc)
 	// https://www.youtube.com/watch?v=XgMWc6LumG4
-	bool mesh::loadFromFile(std::string fileName) {
+	bool Mesh::loadFromFile(std::string fileName) {
 		std::ifstream file(fileName);
 		if (!file.is_open())
 		{
@@ -34,7 +34,7 @@ namespace mge {
 		
 		std::vector<vector4d> vertices;
 
-		 
+
 		while (!file.eof()) {
 			char line[128];
 			file.getline(line, 128);
@@ -57,7 +57,7 @@ namespace mge {
 				int face[3];
 				stream >> line_delimiter >> face[0] >> face[1] >> face[2];
 				triags.push_back(path4d(
-					vertices[face[0]-1], vertices[face[1]-1], vertices[face[2]-1]
+					vertices[face[0]- 1], vertices[face[1]- 1], vertices[face[2]- 1]
 				));
 			}
 

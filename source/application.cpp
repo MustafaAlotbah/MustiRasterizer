@@ -28,7 +28,8 @@ namespace mge
 	/*  Global Variables  */
 	float time = 0;
 	float angle = 0;
-	mesh m;
+	Mesh m;
+	Mesh _m;
 
 	/*  The work of the rasterizer  */
 	bool Application::OnLoad() {
@@ -54,7 +55,7 @@ namespace mge
 	float scale = 100;
 
 
-
+	float _angle = 0;
 
 
 
@@ -63,17 +64,18 @@ namespace mge
 
 		/* dummy animation */
 		time = time + deltaTime;
-		angle += 2 * deltaTime;
-		if (time > 5)
+		//angle = angle + 2 * deltaTime;
+		angle = 3.14 *  sin( time );
+		/*if (time > 5)
 		{
 			time = 0; 
-		}
+		}*/
 		rasterizer.initSession(Pixel(0x300300));
 		/*  Start Drawing scope */
 
 
 		// cube 
-		vector4d cube_vecs[8] = {
+		/*vector4d cube_vecs[8] = {
 			vector4d(-1,	1,		-1, 1) * 30.0f,
 			vector4d(1,		1,		-1, 1) * 30.0f,
 			vector4d(1,		-1,		-1, 1) * 30.0f,
@@ -83,17 +85,11 @@ namespace mge
 			vector4d(-1,	1,		1, 1) * 30.0f,
 			vector4d(-1,	-1,		1, 1) * 30.0f,
 			vector4d(1,		-1,		1, 1) * 30.0f
-		};
+		};*/
 
 
-
-		/*vector4d vectors[3] = {
-			vector4d(1,		1,		1, 1)*50.0f,
-			vector4d(1,		-1,		1, 1)*50.0f,
-			vector4d(-1,	1,		1, 1)*50.0f
-		};
 		
-
+		/*
 		float minX = min(vectors[0].x, min(vectors[1].x, vectors[2].x));
 		float maxX = max(vectors[0].x, max(vectors[1].x, vectors[2].x));
 		float midX = minX + (maxX - minX)/2;
@@ -102,7 +98,6 @@ namespace mge
 		float minY = min(vectors[0].y, min(vectors[1].y, vectors[2].y));
 		float maxY = max(vectors[0].y, max(vectors[1].y, vectors[2].y));
 		float midY = minY + (maxY - minY) / 2;*/
-
 
 
 
@@ -170,9 +165,9 @@ namespace mge
 			//vectors[i] =  translate  * vectors[i];
 			//vectors[i] = shear * vectors[i];
 
-			cube_vecs[i] = rotatez * cube_vecs[i];
+			//cube_vecs[i] = rotatez * cube_vecs[i];
 
-			cube_vecs[i] = orthoPorj1 * cube_vecs[i];
+			//cube_vecs[i] = orthoPorj1 * cube_vecs[i];
 
 			//vectors[i] += center;
 
@@ -180,9 +175,9 @@ namespace mge
 
 
 			// translate to screen world
-			 cube_vecs[i] = cube_vecs[i] *
+			 /*cube_vecs[i] = cube_vecs[i] *
 				 vector4d(videoBuffer->width / 2 / scale, videoBuffer->height / 2 / scale, 1, 1) +
-				 vector4d(videoBuffer->width / 2, videoBuffer->height / 2, 0, 0);
+				 vector4d(videoBuffer->width / 2, videoBuffer->height / 2, 0, 0);*/
 
 			/*vectors[i] = vectors[i] * 
 				vector4d(videoBuffer->width / 2 / scale, videoBuffer->height / 2 / scale, 1, 1) + 
@@ -220,38 +215,94 @@ namespace mge
 			rasterizer.drawPolygon(4, _vectors, GPURasterizer::PolygonMode::Connected, Pixel(0xffffff));
 		}*/
 
+		
+		////////////////////////////// ROTATING TRIANGLE //////////////////////////////////
+		vector4d vectors[3] = {
+			vector4d(1,	0,		1, 1) * 50.0f,
+			vector4d(0,	0.8,		1, 1) * 50.0f,
+			vector4d(0,	0,		1, 1) * 50.0f
+		};
+			 _angle += deltaTime;
+		float _rotate2[4][4] = {
+			{cos(_angle),	-sin(_angle),	0, 0},
+			{sin(_angle),	cos(_angle),		0, 0},
+			{0,				0,				1, 0},
+			{0,				0,				0, 1}
+		};
+		matrix4d rotate2(_rotate2);
 
 
-		mesh _m = m;
-
-
-
-		int count = _m.triags.size();
-		for (int i = 0; i < count; i++)
+		for (int i = 0; i < 3; i++)
 		{
-			// transform
-			for (int v = 0; v < 3; v++)
-			{
-				_m.triags[i].vectors[v] *= 30;
-				_m.triags[i].vectors[v] = rotatez * _m.triags[i].vectors[v];
-				_m.triags[i].vectors[v] = orthoPorj1 * _m.triags[i].vectors[v];
-				_m.triags[i].vectors[v] = _m.triags[i].vectors[v] *
-					vector4d(videoBuffer->width / 2 / scale, videoBuffer->height / 2 / scale, 1, 1) +
-					vector4d(videoBuffer->width / 2, videoBuffer->height / 2, 0, 0);
-			}
-			vector2d _vectors[3] = {
-				vector2d(_m.triags[i].vectors[0]),
-				vector2d(_m.triags[i].vectors[1]),
-				vector2d(_m.triags[i].vectors[2])
-			};
-			rasterizer.drawPolygon(3, _vectors, GPURasterizer::PolygonMode::Connected, Pixel(0xffffff));
+			vectors[i] = rotate2 * vectors[i];
+			vectors[i] = vectors[i] *
+				vector4d(videoBuffer->width / 2 / scale, videoBuffer->height / 2 / scale, 1, 1) +
+				vector4d(videoBuffer->width / 2, videoBuffer->height / 2, 0, 0);
+
 		}
+			vector2d _vectors[3] = {
+				vector2d(vectors[0]),
+				vector2d(vectors[1]),
+				vector2d(vectors[2])
+			};
+			rasterizer.FillTriangle(_vectors, Pixel(0xf00f00));
+			rasterizer.drawPolygon(3, _vectors, GPURasterizer::PolygonMode::Connected, Pixel(0xffffff)  );
+
+
+			 
+
+		////////////////////////////// DrawMesh Function //////////////////////////////////
+		//_m = m;
+		//rasterizer.drawMesh(_m, Pixel(0xFFFFFF));
+		
+
+		////////////////////////////// HardCoding Draw Mesh //////////////////////////////////
+		//// Draw the mesh using the CPU loop (lines still through GPU!)
+		//
+		//_m = m;
+		//int count = _m.triags.size(); 
+		//for (int i = 0; i < count; i++)
+		//{
+		//	// transform
+		//	for (int v = 0; v < 3; v++)
+		//	{
+		//		_m.triags[i].vectors[v] *= 30;
+		//		_m.triags[i].vectors[v] = rotatez * _m.triags[i].vectors[v];
+		//		_m.triags[i].vectors[v] = orthoPorj1 * _m.triags[i].vectors[v];
+		//		_m.triags[i].vectors[v] = _m.triags[i].vectors[v] *
+		//			vector4d(videoBuffer->height / 2 / scale, videoBuffer->height / 2 / scale, 1, 1) +
+		//			vector4d(videoBuffer->width / 2, videoBuffer->height / 2, 0, 0);
+		//	}
+		//	vector2d _vectors[3] = {
+		//		vector2d(_m.triags[i].vectors[0]),
+		//		vector2d(_m.triags[i].vectors[1]),
+		//		vector2d(_m.triags[i].vectors[2])
+		//	};
+		////	rasterizer.drawPolygon(3, _vectors, GPURasterizer::PolygonMode::Connected, Pixel(0xffffff));
+		//	rasterizer.FillTriangle(_vectors, Pixel(0xf00f00));
+		//}
+		//
 
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		// print FPS
 		int val = 1.0f/deltaTime;
 		int scale = 16;
 		int offset = 0;
@@ -270,17 +321,6 @@ namespace mge
 			GPURasterizer::PolygonMode::Disconnected, Pixel(0xffffff)
 		);
 		offset += scale + scale / 2;
-
-
-
-
-
-
-
-
-
-
-
 
 
 

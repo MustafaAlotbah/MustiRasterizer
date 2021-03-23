@@ -13,7 +13,7 @@
 #define DEBUG
 
 #include "gpu_rasterizer.h"
-
+#include "geometry_processor.h"
 
 
 namespace mge {
@@ -31,7 +31,8 @@ namespace mge {
 		__gpu_height = height;
 	}
 
-	__device__ __host__ void gpuDrawPixel(int x, int y, Pixel p) {
+	// only on device since the device memory will be copied in the end
+	__device__ void gpuDrawPixel(int x, int y, Pixel p) {
 		y = __gpu_height - y - 1;	// correct the orientation
 		if( y <__gpu_height && y >= 0 && x >= 0 && x <= __gpu_width)
 		*((uint32_t*)__gpu_buffer + y * __gpu_width + x) = p.color.value;
@@ -82,7 +83,9 @@ namespace mge {
 		gpuDrawPixel(x, threadIdx.x + yMin, p);
 	}
 	
-
+	__global__ void gpuDrawMeshKernel(std::vector<path4d>* MeshPtr, Pixel p) {
+		gpuDrawPixel(20, 20, p);
+	}
 
 
 	/*---------------------Rasterizer Interface-------------------------*/
@@ -236,122 +239,60 @@ namespace mge {
 	}
 
 
-	struct line
-	{
-		vector2d p1;
-		vector2d p2;
-	};
 
-	__device__ __host__ int getLineBound(int x, int y, line _line) {
-		float y1 = _line.p1.y, y2 = _line.p2.y;
-		float x1 = _line.p1.x, x2 = _line.p2.x;
-		if (y1 == y2)
-		{
-			return x;
-		}
-		return x1 + ((y - y1) * (x2 - x1)) / (y2 - y1 + 0.0001f);
-		return 1;
-	}
 
-	__global__ void FillTri(int leftX, int rightX, int upperY, int lowerY,
-		line _leftLine, line _rightLine, line _leftLine2, line _rightLine2,
-		Pixel p) {
+	__device__ void FillTriangleDevice(int leftX, int rightX, int upperY, int lowerY, vector2d v1, vector2d v2, vector2d base, Pixel p) {
+
 		int width = rightX - leftX;
 		int height = lowerY - upperY;
+
 		int i = (blockIdx.x * blockDim.x + threadIdx.x) % (width * height);
 		int x = leftX + (i % width);
 		int y = upperY + (i / width);
-		if (
-			x >= getLineBound(x, y, _leftLine)
-			&& x >= getLineBound(x, y, _leftLine2)
-			&& x <= getLineBound(x, y, _rightLine)
-			&& x <= getLineBound(x, y, _rightLine2)
-			)
+
+		float det = v1.x * v2.y - v2.x * v1.y;
+
+		float a = (v2.y * (x - base.x) - v2.x * (y - base.y)) / det;
+		float b = (-v1.y * (x - base.x) + v1.x * (y - base.y)) / det;
+
+		if (a >= 0 && b >= 0 && a + b <= 1)
 		{
 			gpuDrawPixel(x, y, p);
 		}
 	}
 
+	__global__ void FillTriangleKernel(int leftX, int rightX, int upperY, int lowerY, vector2d v1, vector2d v2, vector2d base, Pixel p) {
 
+		FillTriangleDevice(leftX, rightX, upperY, lowerY, v1, v2, base, p);
+	}
+
+	//  Thanks to raman for help
 	bool GPURasterizer::FillTriangle(vector2d points[3], Pixel p) {
+
 
 		int upperY = min(points[0].y, min(points[1].y, points[2].y));
 		int lowerY = max(points[0].y, max(points[1].y, points[2].y));
-		int leftX =  min(points[0].x, min(points[1].x, points[2].x));
+		int leftX = min(points[0].x, min(points[1].x, points[2].x));
 		int rightX = max(points[0].x, max(points[1].x, points[2].x));
 
 
-		// draw outlines?
-		//drawLine(leftX, upperY, rightX, upperY, Pixel(0xf0f0f0));
-		//drawLine(leftX, lowerY, rightX, lowerY, Pixel(0xf0f0f0));
-		//drawLine(leftX, upperY, leftX, lowerY, Pixel(0xf0f0f0));
-		//drawLine(rightX, upperY, rightX, lowerY, Pixel(0xf0f0f0));
-
-		vector2d upperPoint(points[0].x, points[0].y);
-		vector2d lowerPoint(points[0].x, points[0].y );
-		vector2d leftPoint(points[0].x, points[0].y);
-		vector2d rightPoint(points[0].x, points[0].y);
-
-
-
-		for (int i = 0; i < 3; i++)
-		{
-			if (points[i].y < upperPoint.y)
-			{
-				upperPoint = points[i];
-			}
-			if (points[i].y > lowerPoint.y)
-			{
-				lowerPoint = points[i];
-			}
-			if (points[i].x > rightPoint.x)
-			{
-				rightPoint = points[i];
-			}
-			if (points[i].x < leftPoint.x)
-			{
-				leftPoint = points[i];
-			}
-		}
-
-		vector2d _up	(upperPoint.x,	upperPoint.y );
-		vector2d _left	(leftPoint.x,	leftPoint.y  );
-		vector2d _down	(lowerPoint.x,	lowerPoint.y );
-		vector2d _right (rightPoint.x,	rightPoint.y );
-
-		if (_left.x == _up.x && _left.y == _up.y)
-		{
-			for (volatile int i = 0; i < 3; i++)
-			{
-				if (/*points[i][0] <= _left.x &&*/ points[i].y >= _left.y)
-				{
-					_left = points[i];
-				}
-			}
-		}
-
-
-		line _leftLine = { _up, _left };
-		line _rightLine = { _up, _right };
-		line _leftLine2 = { _down, _left };
-		line _rightLine2 = { _down, _right };
-
+		vector2d v1 = points[0] - points[1];
+		vector2d v2 = points[2] - points[1];
 
 		int _area = (rightX - leftX) * (lowerY - upperY);
 		int blcks = _area / 1024;
-		FillTri<<<blcks+1, 1024>>>(leftX, rightX, upperY, lowerY, _leftLine, _rightLine, _leftLine2, _rightLine2, p);
-	
-
-		drawLine(_leftLine.p1, _leftLine.p2, Pixel(0xff0000));
-
-
+		FillTriangleKernel <<<blcks + 1, 1024 >>> (leftX, rightX, upperY, lowerY, points[0] - points[1], points[2] - points[1], points[1], p);
 		return true;
-
-
-
-
 	}
 
 
+
+
+
+	bool GPURasterizer::drawMesh(Mesh m, Pixel p) {
+		gpuDrawMeshKernel <<<1, 1 >>> (0, p);
+
+		return true;
+	}
 
 }

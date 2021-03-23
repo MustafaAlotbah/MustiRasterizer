@@ -18,11 +18,11 @@ namespace mge {
 	struct path4d {
 		std::vector<vector4d> vectors;
 
-		path4d(vector4d a, vector4d b, vector4d c);
+		__device__ __host__ path4d(vector4d a, vector4d b, vector4d c);
 	};
 
 	// here the path has only 3 points!
-	struct mesh {
+	struct Mesh {
 		std::vector<path4d> triags;
 
 		bool loadFromFile(std::string fileName);
