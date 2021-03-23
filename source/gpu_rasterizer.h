@@ -12,13 +12,13 @@
 namespace mge {
 
 
-	class GPURasterizer : public Rasterizer
+	class cudaRasterizer : public Rasterizer
 	{
 	public:
 		enum PolygonMode{  Disconnected, Connected, Filled};
 	public:
-		GPURasterizer(VideoBuffer* buffer);
-		~GPURasterizer();
+		cudaRasterizer(VideoBuffer* buffer);
+		~cudaRasterizer();
 
 	public:
 
@@ -31,7 +31,7 @@ namespace mge {
 		virtual bool drawPixel(int x, int y, Pixel p);
 		virtual bool drawVerticalLine(int x, int y1, int y2, Pixel p);
 		virtual bool drawHorizontalLine(int y, int x1, int x2, Pixel p);
-		virtual bool drawFallingRightLine(int x1, int y1, int x2, int y2, Pixel p);
+		virtual bool drawFallingLine(int x1, int y1, int x2, int y2, Pixel p);
 		virtual bool drawFallingLeftLine(int x1, int y1, int x2, int y2, Pixel p);
 
 		virtual bool drawLine(vector2d a, vector2d b, Pixel p);

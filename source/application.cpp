@@ -9,7 +9,6 @@ Application Space
 
 
 
-
 #include"application.h"
 #include"pixel_processor.h"
 #include"gpu_rasterizer.h"
@@ -22,7 +21,7 @@ namespace mge
 
 
 	/*  Global Graphics Classes  */
-	GPURasterizer rasterizer = 0;
+	cudaRasterizer rasterizer = 0;
 
 
 	/*  Global Variables  */
@@ -31,14 +30,21 @@ namespace mge
 	Mesh m;
 	Mesh _m;
 
-	/*  The work of the rasterizer  */
+	/*  Load Graphics classes  */
 	bool Application::OnLoad() {
 		// initialize the rasterizer
-		rasterizer = GPURasterizer(this->videoBuffer);
+		rasterizer = cudaRasterizer(this->videoBuffer);
 
 
 
 		m.loadFromFile("./teapot.obj");
+		return true;
+	}
+
+
+	/* Destroy Graphics classes */
+	bool Application::OnDestroy() {
+
 		return true;
 	}
 
@@ -308,17 +314,17 @@ namespace mge
 		int offset = 0;
 		rasterizer.drawPolygon(
 			translateScale(chars[(val/100) % 10], 20, vector2d(scale + offset, 40)).vectors,
-			GPURasterizer::PolygonMode::Disconnected, Pixel(0xffffff)
+			cudaRasterizer::PolygonMode::Disconnected, Pixel(0xffffff)
 		);
 		offset += scale + scale/2;
 		rasterizer.drawPolygon(
 			translateScale(chars[(val / 10) % 10], 20, vector2d(scale + offset, 40)).vectors,
-			GPURasterizer::PolygonMode::Disconnected, Pixel(0xffffff)
+			cudaRasterizer::PolygonMode::Disconnected, Pixel(0xffffff)
 		);
 		offset += scale + scale / 2;
 		rasterizer.drawPolygon(
 			translateScale(chars[val % 10], 20, vector2d(scale + offset, 40)).vectors,
-			GPURasterizer::PolygonMode::Disconnected, Pixel(0xffffff)
+			cudaRasterizer::PolygonMode::Disconnected, Pixel(0xffffff)
 		);
 		offset += scale + scale / 2;
 

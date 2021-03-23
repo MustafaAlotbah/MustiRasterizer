@@ -56,6 +56,7 @@ namespace mge
 		~Application();
 		virtual bool OnLoad();
 		virtual bool OnUpdate(float DeltaTime);
+		virtual bool OnDestroy();
 	private:
 		VideoBuffer* videoBuffer;
 		LPCWSTR windowTitle;

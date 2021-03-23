@@ -179,7 +179,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE _null, LPSTR lpszArgument, int
 
 	}
 
-
+	application.OnDestroy();
 
 	/*-----------------------------SHOULDN'T ARRIVE HERE--------------------------------*/
 	return 0;
@@ -250,3 +250,5 @@ mge::Application::Application(VideoBuffer* buffer) {
 mge::Application::~Application() {
 
 }
+
+
