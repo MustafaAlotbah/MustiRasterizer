@@ -62,12 +62,18 @@
     <ClInclude Include="source\print.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\dyn_algebra.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="source\gpu_rasterizer.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
     <CudaCompile Include="source\algebra.cu">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
+    <CudaCompile Include="source\dyn_algebra.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
   </ItemGroup>

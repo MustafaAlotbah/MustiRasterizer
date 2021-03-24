@@ -47,7 +47,7 @@ namespace mge {
 			{
 				vector4d v(1);
 				stream >> line_delimiter >> v.x >> v.y >> v.z;
-				v.y = -v.y;
+				//v.y = -v.y;
 				vertices.push_back(v);
 			}
 
@@ -73,9 +73,58 @@ namespace mge {
 
 
 
+	__device__ __host__ dyn_path4d::dyn_path4d(cvector4d a, cvector4d b, cvector4d c) {
+		vectors.push_back(a);
+		vectors.push_back(b);
+		vectors.push_back(c);
+	}
+
+
+	// thanks to javidx9 (olc)
+	// https://www.youtube.com/watch?v=XgMWc6LumG4
+	bool dyn_Mesh::loadFromFile(std::string fileName) {
+		std::ifstream file(fileName);
+		if (!file.is_open())
+		{
+			return false;
+		}
+
+		std::vector<cvector4d> vertices;
+
+
+		while (!file.eof()) {
+			char line[128];
+			file.getline(line, 128);
+
+			std::strstream stream;
+			stream << line;
+			char line_delimiter;
+
+			if (line[0] == 'v')
+			{
+				float v[4] = { 0 };
+				stream >> line_delimiter >> v[0] >> v[1] >> v[2];
+				v[1] = -v[1];
+				vertices.push_back(cvector4d(v));
+			}
+
+
+			if (line[0] == 'f')
+			{
+				int face[3];
+				stream >> line_delimiter >> face[0] >> face[1] >> face[2];
+				triags.push_back(dyn_path4d(
+					vertices[face[0] - 1], vertices[face[1] - 1], vertices[face[2] - 1]
+				));
+			}
 
 
 
+		}
+
+
+		return true;
+	}
 
 
 

@@ -21,7 +21,7 @@ namespace mge
 		};
 
 	public:
-		uint16_t depth = 0;
+		float depth = 0;
 		Color color;
 	
 		enum Mode
@@ -30,9 +30,9 @@ namespace mge
 		};
 
 		Pixel();
-		Pixel(uint32_t value, uint16_t depth);
+		Pixel(uint32_t value, float depth);
 		Pixel(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
-		Pixel(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, uint16_t depth);
+		Pixel(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, float depth);
 		Pixel(uint32_t value);
 
 		Pixel& operator =(const Pixel& v) = default;

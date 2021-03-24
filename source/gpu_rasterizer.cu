@@ -28,13 +28,15 @@ namespace mge {
 
 	/*---------------------CUDA Globals-------------------------*/
 	__device__ void* __gpu_buffer = 0;
+	__device__ void* __depth_buffer = 0;
 	__device__ int __gpu_width = 0;
 	__device__ int __gpu_height = 0;
 
 
 	/*---------------------CUDA Functions-------------------------*/
-	__global__ void gpuSetBufferKernel(void* gpuBuffer, int width, int height) {
+	__global__ void gpuSetBufferKernel(void* gpuBuffer, void* depthBuffer, int width, int height) {
 		__gpu_buffer = gpuBuffer;
+		__depth_buffer = depthBuffer;
 		__gpu_width = width;
 		__gpu_height = height;
 	}
@@ -44,6 +46,11 @@ namespace mge {
 	__global__ void gpuClearBufferKernel(Pixel p) {
 		int i = threadIdx.x + blockDim.x * blockIdx.x % (__gpu_width * __gpu_height);
 		*((uint32_t*)__gpu_buffer + i) = p.color.value;
+	}
+
+	__global__ void gpuClearBufferDepth() {
+		int i = threadIdx.x + blockDim.x * blockIdx.x % (__gpu_width * __gpu_height);
+		*((float*)__depth_buffer + i) = -600;
 	}
 
 
@@ -70,6 +77,7 @@ namespace mge {
 		dim3 thrds(1000, 1);
 		dim3 blcks(lastAllocatedSize / 1000 + 1, 1);
 		gpuClearBufferKernel <<<blcks, thrds >>> (p);
+		gpuClearBufferDepth << <blcks, thrds >> > ();
 		return true;
 	}
 
@@ -78,7 +86,9 @@ namespace mge {
 		lastAllocatedSize = buffer->height * buffer->width;
 		// allocate GPU Memory (will be disposed of by finishing the session
 		cudaMalloc((void**)&gpuBuffer, sizeof(uint32_t) * lastAllocatedSize) ;
-		gpuSetBufferKernel << <1, 1 >> > (gpuBuffer, buffer->width, buffer->height);
+		cudaStatus = cudaMalloc((void**)&depthAddr, sizeof(float) * lastAllocatedSize);
+		gpuSetBufferKernel << <1, 1 >> > (gpuBuffer, depthAddr, buffer->width, buffer->height);
+		
 		clearBuffer(p);
 		return true;
 	}
@@ -87,7 +97,7 @@ namespace mge {
 	bool cudaRasterizer::finishSession() {
 		// copy GPU buffer into CPU buffer and free GPU buffer
 		cudaMemcpy(buffer->addr, gpuBuffer, lastAllocatedSize * sizeof(uint32_t), cudaMemcpyDeviceToHost);
-		return cudaFree(gpuBuffer) == cudaSuccess;
+		return cudaFree(gpuBuffer) == cudaSuccess && cudaFree(depthAddr) == cudaSuccess;
 	}
 
 
@@ -100,14 +110,23 @@ namespace mge {
 
 
 	/*START*/		
-
+	__device__ uint32_t getPixel(uint8_t red, uint8_t green, uint8_t blue)
+		
+	{
+		return (red | (green << 8) | (blue << 16) );
+	}
 
 	/*######################### Public: Draw Pixel ##############################*/
 	// only on device since the device memory will be copied in the end
 	__device__ void gpuDrawPixel(int x, int y, Pixel p) {
 		y = __gpu_height - y - 1;	// correct the orientation
+		if (*((float*)__depth_buffer + y * __gpu_width + x) > p.depth) return;
+		*((float*)__depth_buffer + y * __gpu_width + x) = p.depth;
+
+		float dep = (1+sin(p.depth / 100 ))/2;
 		if (y < __gpu_height && y >= 0 && x >= 0 && x <= __gpu_width)
-			*((uint32_t*)__gpu_buffer + y * __gpu_width + x) = p.color.value;
+			//	*((uint32_t*)__gpu_buffer + y * __gpu_width + x) = p.color.value  - (int(0xFF0000* abs((p.depth+1)/50)) & 0xFF0000);
+			*((uint32_t*)__gpu_buffer + y * __gpu_width + x) = getPixel(p.color.rgba.r * dep, p.color.rgba.g * dep, p.color.rgba.b * dep);
 	}
 
 
@@ -228,7 +247,7 @@ namespace mge {
 	}
 
 
-	bool cudaRasterizer::drawFallingLeftLine(int x1, int y1, int x2, int y2, Pixel p) {
+	bool cudaRasterizer::drawRisingLine(int x1, int y1, int x2, int y2, Pixel p) {
 
 		int xMin = min(min(x1, x2), buffer->width);
 		int xMax = max(max(x1, x2), 0);
@@ -285,14 +304,18 @@ namespace mge {
 
 	/*######################### Public: Draw a Triangle ##############################*/
 
+	bool cudaRasterizer::drawTriangle(std::vector<vector2d> points, Pixel p) {
+		return drawPolygon(points, PolygonMode::Connected, p);
+	}
+
 
 	/*END*/
 
 
-	__device__ void FillTriangleDevice(int leftX, int rightX, int upperY, int lowerY, vector2d v1, vector2d v2, vector2d base, Pixel p) {
+	__device__ void FillTriangle(int leftX, int rightX, int upperY, int lowerY, vector2d v1, vector2d v2, vector2d base, Pixel p) {
 
-		int width = rightX - leftX;
-		int height = lowerY - upperY;
+		int width = rightX - leftX + 1;
+		int height = lowerY - upperY ;
 
 		int i = (blockIdx.x * blockDim.x + threadIdx.x) % (width * height);
 		int x = leftX + (i % width);
@@ -303,7 +326,7 @@ namespace mge {
 		float a = (v2.y * (x - base.x) - v2.x * (y - base.y)) / det;
 		float b = (-v1.y * (x - base.x) + v1.x * (y - base.y)) / det;
 
-		if (a >= 0 && b >= 0 && a + b <= 1)
+		if (a >= -0 && b >= -0 && a + b <= 1)
 		{
 			gpuDrawPixel(x, y, p);
 		}
@@ -311,7 +334,7 @@ namespace mge {
 
 	__global__ void FillTriangleKernel(int leftX, int rightX, int upperY, int lowerY, vector2d v1, vector2d v2, vector2d base, Pixel p) {
 
-		FillTriangleDevice(leftX, rightX, upperY, lowerY, v1, v2, base, p);
+		FillTriangle(leftX, rightX, upperY, lowerY, v1, v2, base, p);
 	}
 
 	//  Thanks to Raman for help
@@ -319,21 +342,21 @@ namespace mge {
 	bool cudaRasterizer::FillTriangle(vector2d points[3], Pixel p) {
 
 
-		int upperY = min(points[0].y, min(points[1].y, points[2].y));
-		int lowerY = max(points[0].y, max(points[1].y, points[2].y));
+		int upperY = min(points[0].y, min(points[1].y, points[2].y))-1;
+		int lowerY = max(points[0].y, max(points[1].y, points[2].y))+1;
 		int leftX = min(points[0].x, min(points[1].x, points[2].x));
 		int rightX = max(points[0].x, max(points[1].x, points[2].x));
 
 
-		vector2d v1 = points[0] - points[1];
-		vector2d v2 = points[2] - points[1];
-
+		vector2d v1 = points[0] - points[1] ;
+		vector2d v2 = points[2] - points[1] ;
 		int _area = (rightX - leftX) * (lowerY - upperY);
-		int blcks = _area / 1024;
-		FillTriangleKernel <<<blcks + 1, 1024 >>> (leftX, rightX, upperY, lowerY, points[0] - points[1], points[2] - points[1], points[1], p);
+		dim3 blcks(_area / 1024 + 1, 1);
+		FillTriangleKernel <<<blcks , 1024 >>> (leftX, rightX, upperY, lowerY, points[0] - points[1], points[2] - points[1], points[1],
+			p
+			);
 		return true;
 	}
-
 
 
 

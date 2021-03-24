@@ -6,6 +6,7 @@ namespace mge {
 
 	// vector 2D Implementation
 
+
 	__device__ __host__ vector2d::vector2d() {
 
 	}
@@ -498,9 +499,6 @@ namespace mge {
 		return equal;
 
 	}
-
-
-
 
 	
 	__device__ __host__ matrix3d  matrix3d::operator + (const matrix3d m) const {

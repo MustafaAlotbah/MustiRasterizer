@@ -10,6 +10,8 @@
 */
 
 
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
 
 
 
@@ -18,24 +20,24 @@ namespace mge
 
 	/*-----------------PIXELS------------------*/
 
-	Pixel::Pixel(uint32_t value, uint16_t depth) {
+	__host__ __device__ Pixel::Pixel(uint32_t value, float depth) {
 		color.value = value;
 		this->depth = depth;
 	}
 
 
 
-	Pixel::Pixel(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, uint16_t depth) :
+	__host__ __device__ Pixel::Pixel(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, float depth) :
 		Pixel(red | (green << 8) | (blue << 16) | (alpha << 24), depth)
 	{
 	}
 
-	Pixel::Pixel(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) :
+	__host__  Pixel::Pixel(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) :
 		Pixel(red, green, blue, alpha, 0) {
 	}
 
 
-	Pixel::Pixel(uint32_t value) :
+	__host__ __device__ Pixel::Pixel(uint32_t value) :
 		Pixel(value, depth)
 	{
 	}

@@ -74,7 +74,7 @@ namespace mge {
 
 
 	// this line looks like ( \ )
-	bool Rasterizer::drawFallingRightLine(int x1, int y1, int x2, int y2, Pixel p) {
+	bool Rasterizer::drawFallingLine(int x1, int y1, int x2, int y2, Pixel p) {
 
 		int startX = min(min(x1, x2), buffer->width);
 		int endX = max(max(x1, x2), 0);
@@ -96,7 +96,7 @@ namespace mge {
 
 
 	// this line looks like ( / )
-	bool Rasterizer::drawFallingLeftLine(int x1, int y1, int x2, int y2, Pixel p) {
+	bool Rasterizer::drawRisingLine(int x1, int y1, int x2, int y2, Pixel p) {
 
 		int xMin = min(min(x1, x2), buffer->width);
 		int xMax = max(max(x1, x2), 0);
@@ -135,16 +135,16 @@ namespace mge {
 
 			if (dx > 0 && dy > 0)
 			{
-				return drawFallingRightLine(x1, y1, x2, y2, p);
+				return drawFallingLine(x1, y1, x2, y2, p);
 			}
 			else if (dx < 0 && dy < 0) {
-				return drawFallingRightLine(x2, y2, x1, y1, p);
+				return drawFallingLine(x2, y2, x1, y1, p);
 			}
 			else if (dx > 0 && dy < 0) {
-				return drawFallingLeftLine(x1, y1, x2, y2, p);
+				return drawRisingLine(x1, y1, x2, y2, p);
 			}
 			else {
-				return drawFallingLeftLine(x2, y2, x1, y1, p);
+				return drawRisingLine(x2, y2, x1, y1, p);
 			}
 
 		}

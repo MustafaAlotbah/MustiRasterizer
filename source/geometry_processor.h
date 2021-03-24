@@ -6,6 +6,9 @@
 #include <vector>
 #include <fstream>
 #include <strstream>
+#include "dyn_algebra.h"
+
+
 
 namespace mge {
 
@@ -30,8 +33,40 @@ namespace mge {
 	};
 
 
+	struct dyn_path4d {
+		std::vector<cvector4d> vectors;
+
+		__device__ __host__ dyn_path4d(cvector4d a, cvector4d b, cvector4d c);
+	};
+
+	// here the path has only 3 points!
+	struct dyn_Mesh {
+		std::vector<dyn_path4d> triags;
+
+		bool loadFromFile(std::string fileName);
+
+	};
+
+
 
 	path2d translateScale(path2d mesh, float scale, vector2d offset);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -156,6 +156,7 @@
     <ClCompile Include="source\rasterizer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\dyn_algebra.h" />
     <ClInclude Include="source\algebra.h" />
     <ClInclude Include="source\geometry_processor.h" />
     <ClInclude Include="source\gpu_rasterizer.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="source\types.h" />
   </ItemGroup>
   <ItemGroup>
+    <CudaCompile Include="source\dyn_algebra.cu" />
     <CudaCompile Include="source\algebra.cu" />
     <CudaCompile Include="source\gpu_rasterizer.cu" />
   </ItemGroup>
